@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sika Water Action Tool</title>
+    <!-- Importing Chart.js for the Matrix -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* SIKA BRANDING & FONTS */
+        :root {
+            --sika-orange: #FFA51F; /* Sika Yellow/Orange */
+            --sika-red: #E2001A;    /* Sika Red */
+            --sika-green: #2E7D32;  /* Sika Green for Legend */
+            --light-bg: #f9f9f9;
+            --border-color: #ddd;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: #333;
+        }
+        
+        /* HEADER DESIGN */
+        header {
+            background: linear-gradient(110deg, var(--sika-orange) 60%, white 60.2%);
+            padding: 15px 40px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            min-height: 60px;
+        }
+        header img {
+            height: 55px;
+            margin-right: 30px;
+        }
+        header h1 {
+            color: #222;
+            margin: 0;
+            font-size: 26px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        
+        /* LAYOUT */
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+            gap: 20px;
+        }
+        .left-panel {
+            flex: 1;
+            min-width: 250px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .right-panel {
+            flex: 3;
+            min-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* FORM CONTROLS */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* DETAIL PANEL */
+        #detailPanel {
+            display: none; /* Hidden until a dot is clicked */
+            margin-top: 20px;
+            border: 2px solid var(--sika-orange);
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #fff;
+        }
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        .detail-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: black;
+            margin: 0;
+            max-width: 70%;
+        }
+        .tags {
+            display: flex;
+            gap: 10px;
+        }
+        .tag {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .tag-category {
+            background-color: #eee;
+            color: #555;
+        }
+        .reduction-potential {
+            font-weight: bold;
+            color: var(--sika-orange);
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        .reduction-potential span {
+            color: black;
+            font-weight: normal;
+        }
+        .action-plan-title {
+            color: var(--sika-orange);
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .action-plan-list {
+            padding-left: 20px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .action-plan-list li::marker {
+            font-weight: bold;
+        }
+        .kpi-row {
+            display: flex;
+            gap: 40px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        .kpi {
+            font-size: 14px;
+        }
+        .kpi-label {
+            color: var(--sika-orange);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .kpi-value {
+            font-weight: bold;
+            color: black;
+        }
+        .kpi-value.normal {
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="/Users/raniabenhamidane/Desktop/SMT_SEMESTER_3/TP_SIKA/sika_water_tool/Logo_Sika_AG.webp" alt="Sika Logo">
+        <h1>Water Management Action Tool</h1>
+    </header>
+
+    <div class="container">
+        <!-- PART 1: Site Characteristics -->
+        <div class="left-panel">
+            <h3 style="color: var(--sika-orange); margin-top:0;">1. Site Characteristics</h3>
+            <p style="font-size: 13px; color: #666;">Identify key site criteria driving solution fit:</p>
+            
+            <div class="form-group">
+                <label for="processType">Process Type</label>
+                <select id="processType" onchange="updateChart()">
+                    <option value="all">All Processes</option>
+                    <option value="batch">Batch Manufacturing</option>
+                    <option value="continuous">Continuous Process</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="waterMix">Water Intake Mix</label>
+                <select id="waterMix">
+                    <option value="groundwater">High Groundwater Dependency</option>
+                    <option value="municipal">Municipal / Tap Water</option>
+                    <option value="surface">Surface Water (River/Lake)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="plantAge">Plant Age</label>
+                <select id="plantAge">
+                    <option value="old">Legacy Plant (>20 years)</option>
+                    <option value="mid">Mid-age Plant (5-20 years)</option>
+                    <option value="new">Modern Plant (<5 years)</option>
+                </select>
+            </div>
+            
+            <div style="margin-top: 30px; font-size: 12px; color: #777;">
+                <strong>Legend:</strong><br>
+                <span style="color: var(--sika-orange); font-size:20px;">●</span> Reuse Measure<br>
+                <span style="color: var(--sika-red); font-size:20px;">●</span> Reduce Measure<br>
+                <span style="color: var(--sika-green); font-size:20px;">●</span> Restore Measure
+            </div>
+        </div>
+
+        <!-- PART 2 & 3: Matrix and Action Plan -->
+        <div class="right-panel">
+            <h3 style="color: var(--sika-orange); margin-top:0;">2. Cost / Impact Matrix</h3>
+            <p style="font-size: 13px; color: #666;">Click on a dot to see the implementation toolkit.</p>
+            
+            <!-- The Chart -->
+            <div style="position: relative; height: 350px; width: 100%;">
+                <canvas id="matrixChart"></canvas>
+            </div>
+
+            <!-- PART 3: The Detailed Toolkit Panel -->
+            <div id="detailPanel">
+                <div class="detail-header">
+                    <h2 class="detail-title" id="det-title">Measure Title</h2>
+                    <div class="tags">
+                        <span class="tag tag-category" id="det-tag1">Category</span>
+                        <span class="tag" id="det-tag2">Type</span>
+                    </div>
+                </div>
+                
+                <div class="reduction-potential">
+                    Framework: <span id="det-reduction" style="font-weight: normal; color: black;">Standards</span>
+                </div>
+
+                <div class="action-plan-title">Action Plan</div>
+                <ol class="action-plan-list" id="det-steps">
+                    <!-- Steps injected via JS -->
+                </ol>
+
+                <div class="kpi-row">
+                    <div class="kpi">
+                        <span class="kpi-label">Time Horizon</span>
+                        <span class="kpi-value" id="det-time">4 to 8 months</span>
+                    </div>
+                    <div class="kpi">
+                        <span class="kpi-label">Total investment</span>
+                        <span class="kpi-value" id="det-cost">CHF 600k</span>
+                    </div>
+                </div>
+                <div class="kpi-row" style="border-top: none; padding-top: 10px;">
+                    <div class="kpi">
+                        <span class="kpi-label">Potential contact</span>
+                        <span class="kpi-value normal" id="det-contact">Sika factory reference</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const allMeasures = [
+            {
+                id: 1,
+                title: "Design and install closed-loop wastewater recycling systems.",
+                type: "Reuse", 
+                category: "Site-wide",
+                xCost: 8,      
+                yImpact: 9,    
+                reduction: "AWS standards; WBCSD CTI; CDP Water Security",
+                timeHorizon: "6 to 12 months",
+                investment: "CHF 750k",
+                contact: "Production sites that already implemented similar measures: Sika Madrid (Spain) & Sika Dubai (UAE)",
+                processFit: "all",
+                steps: [
+                    "<strong>Source Mapping:</strong> Identify major wastewater streams across the facility.",
+                    "<strong>Treatment Sizing:</strong> Evaluate required membrane or filtration units (e.g., Reverse Osmosis).",
+                    "<strong>Closed-Loop Piping:</strong> Reroute treated water back to facility inputs to prevent discharge.",
+                    "<strong>Monitoring & Control:</strong> Set up automated quality gates for safe closed-loop recirculation."
+                ]
+            },
+            {
+                id: 2,
+                title: "Upgrade manufacturing processes to maximize water efficiency per unit produced.",
+                type: "Reduce", 
+                category: "Wash-water (CIP)",
+                xCost: 4, 
+                yImpact: 6,
+                reduction: "AWS standards, CDP water security, SBTN",
+                timeHorizon: "3 to 6 months",
+                investment: "CHF 200k",
+                contact: "Production sites that already implemented similar measures: Sika Zurich (Switzerland) & Sika Milan (Italy)",
+                processFit: "batch",
+                steps: [
+                    "<strong>CIP Audit:</strong> Review clean-in-place cycles and rinse durations for batch mixers.",
+                    "<strong>Equipment Automation:</strong> Install automated spray heads and pulsed-rinse controllers.",
+                    "<strong>Recipe Optimization:</strong> Streamline washing steps between color or product batch changes.",
+                    "<strong>Staff Training:</strong> Instruct operators on lean water consumption guidelines during cleaning."
+                ]
+            },
+            {
+                id: 3,
+                title: "Reformulate product mixes to replace freshwater with recycled process water.",
+                type: "Reuse", 
+                category: "Product ingredient",
+                xCost: 5, 
+                yImpact: 7,
+                reduction: "CDP Water Security; WBCSD CTI (Circular Transition Indicators)",
+                timeHorizon: "4 to 8 months",
+                investment: "CHF 350k",
+                contact: "Production sites that already implemented similar measures: Sika Shanghai (China) & Sika São Paulo (Brazil)",
+                processFit: "batch",
+                steps: [
+                    "<strong>Quality Assessment:</strong> Test chemical compatibility of recycled water streams with product mixes.",
+                    "<strong>Formulation Adjustment:</strong> Adjust admixture recipes to accommodate treated water characteristics.",
+                    "<strong>Compliance Testing:</strong> Conduct laboratory quality validation on finished batches.",
+                    "<strong>Production Rollout:</strong> Standardize recycled water utilization in standard manufacturing runs."
+                ]
+            }
+        ];
+
+        let chartInstance = null;
+
+        const colorOrange = '#FFA51F';
+        const colorRed = '#E2001A';
+
+        function initChart() {
+            const ctx = document.getElementById('matrixChart').getContext('2d');
+            
+            chartInstance = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw.measure.title;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Implementation Cost / Effort (Low to High)', font: {weight: 'bold'} },
+                            min: 0,
+                            max: 10
+                        },
+                        y: {
+                            title: { display: true, text: 'Water Savings Impact (Low to High)', font: {weight: 'bold'} },
+                            min: 0,
+                            max: 10
+                        }
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const datasetIndex = elements[0].datasetIndex;
+                            const dataIndex = elements[0].index;
+                            const clickedData = chartInstance.data.datasets[datasetIndex].data[dataIndex].measure;
+                            displayDetails(clickedData);
+                        }
+                    }
+                }
+            });
+            updateChart();
+        }
+
+        function updateChart() {
+            const filterProcess = document.getElementById('processType').value;
+            
+            let filteredMeasures = allMeasures.filter(m => {
+                if (filterProcess === 'all') return true;
+                return m.processFit === filterProcess || m.processFit === 'all';
+            });
+
+            const dataPoints = filteredMeasures.map(m => {
+                return {
+                    x: m.xCost,
+                    y: m.yImpact,
+                    measure: m 
+                };
+            });
+
+            const reuseData = dataPoints.filter(d => d.measure.type === "Reuse");
+            const reduceData = dataPoints.filter(d => d.measure.type === "Reduce");
+
+            chartInstance.data.datasets = [
+                {
+                    label: 'Reuse',
+                    data: reuseData,
+                    backgroundColor: colorOrange,
+                    pointRadius: 10,
+                    pointHoverRadius: 12
+                },
+                {
+                    label: 'Reduce',
+                    data: reduceData,
+                    backgroundColor: colorRed,
+                    pointRadius: 10,
+                    pointHoverRadius: 12
+                }
+            ];
+            
+            chartInstance.update();
+            document.getElementById('detailPanel').style.display = 'none';
+        }
+
+        function displayDetails(measure) {
+            document.getElementById('detailPanel').style.display = 'block';
+            
+            document.getElementById('det-title').innerText = measure.title;
+            document.getElementById('det-tag1').innerText = measure.category;
+            document.getElementById('det-tag2').innerText = measure.type;
+            
+            const tag2 = document.getElementById('det-tag2');
+            if(measure.type === "Reuse") {
+                tag2.style.backgroundColor = "#ffebd6";
+                tag2.style.color = "var(--sika-orange)";
+            } else {
+                tag2.style.backgroundColor = "#fad4d8";
+                tag2.style.color = "var(--sika-red)";
+            }
+
+            document.getElementById('det-reduction').innerText = measure.reduction;
+            document.getElementById('det-time').innerText = measure.timeHorizon;
+            document.getElementById('det-cost').innerText = measure.investment;
+            document.getElementById('det-contact').innerText = measure.contact;
+
+            const stepsList = document.getElementById('det-steps');
+            stepsList.innerHTML = ""; 
+            measure.steps.forEach(stepText => {
+                const li = document.createElement('li');
+                li.innerHTML = stepText;
+                stepsList.appendChild(li);
+            });
+            
+            document.getElementById('detailPanel').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        window.onload = initChart;
+    </script>
+</body>
+</html>

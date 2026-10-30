@@ -42,45 +42,59 @@
         }
         :focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
-        /* HEADER: the sika.com diagonal yellow block */
+        /* HEADER: the sika.com diagonal yellow block.
+           Fixed at the top. Tall on arrival; once the page scrolls it shrinks to a slim bar
+           and the yellow block narrows, like the sticky header on sika.com. */
+        :root { --header-h: 150px; --header-h-slim: 64px; }
+        body { padding-top: var(--header-h); }
         header {
-            position: relative;
-            min-height: 132px;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 50;
+            padding-top: env(safe-area-inset-top, 0px);
             background: #F4F4F2;
             overflow: hidden;
+            transition: box-shadow .35s var(--ease);
         }
-        header::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: var(--sika-yellow);
-            clip-path: polygon(0 0, 62% 0, 57% 100%, 0 100%);
-            animation: cut-in .9s var(--ease) both;
-        }
+        /* The yellow block is the logo + title group itself, so it always reaches past the text. */
         .header-inner {
+            --slant: 70px;
             position: relative;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 28px;
-            padding: 26px 48px;
-            min-height: 132px;
+            max-width: 100%;
+            height: var(--header-h);
+            padding-left: max(48px, env(safe-area-inset-left, 0px));
+            padding-right: calc(var(--slant) + 56px);
+            background: var(--sika-yellow);
+            clip-path: polygon(0 0, 100% 0, calc(100% - var(--slant)) 100%, 0 100%);
+            transition: height .45s var(--ease), gap .45s var(--ease), padding-right .45s var(--ease), clip-path .45s var(--ease);
+            animation: cut-in .9s var(--ease) backwards;
         }
         header img {
             height: 72px;
             width: auto;
             flex-shrink: 0;
-            animation: rise .7s .25s var(--ease) both;
+            transition: height .45s var(--ease);
+            animation: rise .7s .25s var(--ease) backwards;
         }
         header h1 {
             margin: 0;
-            font-size: clamp(26px, 3.6vw, 48px);
+            font-size: clamp(20px, 2.9vw, 44px);
             font-weight: 500;
             line-height: 1;
             text-transform: uppercase;
             letter-spacing: .01em;
-            max-width: 13ch;
-            animation: rise .7s .35s var(--ease) both;
+            white-space: nowrap;
+            transition: font-size .45s var(--ease);
+            animation: rise .7s .35s var(--ease) backwards;
         }
+        /* slim state */
+        header.slim { box-shadow: 0 2px 10px rgba(29, 29, 27, .12); }
+        header.slim .header-inner { --slant: 28px; height: var(--header-h-slim); gap: 18px; padding-right: calc(var(--slant) + 36px); }
+        header.slim img { height: 38px; }
+        header.slim h1 { font-size: 19px; }
 
         /* LAYOUT */
         .container {
@@ -195,6 +209,7 @@
 
         /* DETAIL PANEL: a folder sheet with a coloured tab */
         #detailPanel {
+            scroll-margin-top: calc(var(--header-h-slim) + 16px);
             display: none;
             margin-top: 34px;
             position: relative;
@@ -303,7 +318,7 @@
         .kpi-value.normal { font-weight: 500; font-size: 15px; }
 
         /* MOTION */
-        @keyframes cut-in { from { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); } }
+        @keyframes cut-in { from { clip-path: polygon(0 0, 0% 0, 0% 100%, 0 100%); } }
         @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
         @keyframes sheet-up { from { opacity: 0; transform: translateY(40px); } }
         @media (prefers-reduced-motion: reduce) {
@@ -313,9 +328,13 @@
         /* RESPONSIVE */
         @media (max-width: 900px) {
             .container { grid-template-columns: 1fr; padding: 20px 16px 40px; gap: 18px; }
-            .header-inner { padding: 20px 16px; gap: 16px; }
-            header::before { clip-path: polygon(0 0, 88% 0, 78% 100%, 0 100%); }
-            header img { height: 52px; }
+            :root { --header-h: 88px; --header-h-slim: 54px; }
+            .header-inner { --slant: 28px; gap: 12px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: calc(var(--slant) + 18px); }
+            header img { height: 44px; }
+            header h1 { font-size: min(3.9vw, 22px); }
+            header.slim .header-inner { --slant: 20px; gap: 10px; padding-right: calc(var(--slant) + 14px); }
+            header.slim img { height: 30px; }
+            header.slim h1 { font-size: min(3.4vw, 15px); }
             .chart-box { height: 320px; }
             .detail-header { flex-direction: column; }
             .tags { justify-content: flex-start; }
@@ -695,6 +714,17 @@
             panel.classList.add('open');
             panel.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
         }
+
+        // Slim header once the page has scrolled (with a small dead zone so it does not flicker).
+        const header = document.querySelector('header');
+        let slim = false;
+        function onScroll() {
+            const y = window.scrollY;
+            if (!slim && y > 60) { slim = true; header.classList.add('slim'); }
+            else if (slim && y < 20) { slim = false; header.classList.remove('slim'); }
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
 
         window.onload = initChart;
     </script>

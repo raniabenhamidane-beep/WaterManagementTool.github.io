@@ -4,187 +4,341 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sika Water Action Tool</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Importing Chart.js for the Matrix -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
-        /* SIKA BRANDING & FONTS */
+        /* ------------------------------------------------------------
+           Design proposal – Sika brand (sika.com + brand guidelines)
+           Yellow #F5B325, Red #D8282F, light concrete grey, square type,
+           the diagonal yellow header cut, folder-tab detail sheet.
+           ------------------------------------------------------------ */
         :root {
-            --sika-orange: #FFA51F; /* Sika Yellow/Orange */
-            --sika-red: #E2001A;    /* Sika Red */
-            --sika-green: #2E7D32;  /* Sika Green for Legend */
-            --light-bg: #f9f9f9;
-            --border-color: #ddd;
+            --sika-yellow: #F5B325;
+            --sika-red: #D8282F;
+            --sika-green: #2E7D4F;
+            --ink: #1D1D1B;
+            --muted: #5E646A;
+            --concrete: #EDEDEB;
+            --paper: #FFFFFF;
+            --line: #D3D5D6;
+            --yellow-wash: #FCEFCF;
+            --ease: cubic-bezier(.2, .8, .2, 1);
+            --font: "Saira", "Segoe UI", system-ui, sans-serif;
         }
+        * { box-sizing: border-box; }
         body {
-            font-family: Arial, sans-serif;
+            font-family: var(--font);
             margin: 0;
             padding: 0;
-            background-color: var(--light-bg);
-            color: #333;
+            color: var(--ink);
+            background-color: var(--concrete);
+            /* fine concrete grain */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            font-size: 16px;
+            line-height: 1.5;
         }
-        
-        /* HEADER DESIGN */
+        :focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+        /* HEADER: the sika.com diagonal yellow block */
         header {
-            background: linear-gradient(110deg, var(--sika-orange) 60%, white 60.2%);
-            padding: 15px 40px;
+            position: relative;
+            min-height: 132px;
+            background: #F4F4F2;
+            overflow: hidden;
+        }
+        header::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: var(--sika-yellow);
+            clip-path: polygon(0 0, 62% 0, 57% 100%, 0 100%);
+            animation: cut-in .9s var(--ease) both;
+        }
+        .header-inner {
+            position: relative;
             display: flex;
             align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            min-height: 60px;
+            gap: 28px;
+            padding: 26px 48px;
+            min-height: 132px;
         }
         header img {
-            height: 55px;
-            margin-right: 30px;
+            height: 72px;
+            width: auto;
+            flex-shrink: 0;
+            animation: rise .7s .25s var(--ease) both;
         }
         header h1 {
-            color: #222;
             margin: 0;
-            font-size: 26px;
-            font-weight: bold;
-            letter-spacing: 0.5px;
+            font-size: clamp(26px, 3.6vw, 48px);
+            font-weight: 500;
+            line-height: 1;
             text-transform: uppercase;
-        }
-        
-        /* LAYOUT */
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            padding: 20px;
-            gap: 20px;
-        }
-        .left-panel {
-            flex: 1;
-            min-width: 250px;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .right-panel {
-            flex: 3;
-            min-width: 600px;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
+            letter-spacing: .01em;
+            max-width: 13ch;
+            animation: rise .7s .35s var(--ease) both;
         }
 
-        /* FORM CONTROLS */
-        .form-group {
-            margin-bottom: 15px;
+        /* LAYOUT */
+        .container {
+            display: grid;
+            grid-template-columns: minmax(250px, 1fr) minmax(0, 3fr);
+            gap: 28px;
+            padding: 36px 48px 56px;
+            max-width: 1440px;
         }
+        .panel-title {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin: 0 0 6px;
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        .panel-title .num {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--ink);
+            background: var(--sika-yellow);
+            padding: 1px 9px;
+            transform: skewX(-12deg);
+        }
+        .panel-title .num span { display: inline-block; transform: skewX(12deg); }
+        .panel-intro { font-size: 15px; color: var(--muted); margin: 0 0 22px; }
+
+        .left-panel {
+            background: var(--paper);
+            padding: 26px 24px 28px;
+            border-top: 6px solid var(--sika-yellow);
+            align-self: start;
+            animation: rise .7s .45s var(--ease) both;
+        }
+        .right-panel {
+            background: var(--paper);
+            padding: 26px 28px 30px;
+            border-top: 6px solid var(--ink);
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            animation: rise .7s .55s var(--ease) both;
+        }
+
+        /* FORM CONTROLS, close to sika.com form fields */
+        .form-group { margin-bottom: 18px; }
         label {
             display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 6px;
         }
         select {
             width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
+            appearance: none;
+            padding: 12px 40px 12px 14px;
+            border: 1.5px solid var(--line);
+            border-radius: 0;
+            background: var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%231D1D1B' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 14px center;
+            font: 500 15px var(--font);
+            color: var(--ink);
+            cursor: pointer;
+            transition: border-color .15s, box-shadow .15s;
+        }
+        select:hover { border-color: var(--ink); }
+        select:focus-visible { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px var(--sika-yellow); }
+
+        .legend {
+            margin-top: 30px;
+            padding-top: 18px;
+            border-top: 1px solid var(--line);
             font-size: 14px;
         }
+        .legend strong { display: block; margin-bottom: 8px; }
+        .legend-item { display: flex; align-items: center; gap: 10px; padding: 3px 0; }
+        .swatch { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px rgba(0,0,0,.12); }
 
-        /* DETAIL PANEL */
+        /* MATRIX */
+        .chart-hint { font-size: 15px; color: var(--muted); margin: 0 0 18px; }
+        .chart-box {
+            position: relative;
+            height: 380px;
+            width: 100%;
+        }
+
+
+        /* MATRIX KEY: the four boxes in priority order */
+        .matrix-key {
+            list-style: none;
+            margin: 22px 0 0;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px;
+        }
+        .matrix-key li {
+            display: grid;
+            padding: 12px 14px 14px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .matrix-key .k1 { background: #F9CF77; }
+        .matrix-key .k2, .matrix-key .k3 { background: #FCE6B5; }
+        .matrix-key .k4 { background: #F7F4EC; }
+        .matrix-key strong { display: block; font-size: 15px; margin-bottom: 2px; }
+        .matrix-key span:not(.k-num) { color: #3F4448; }
+
+        @media (max-width: 1100px) { .matrix-key { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 600px) { .matrix-key { grid-template-columns: 1fr; } }
+
+        /* DETAIL PANEL: a folder sheet with a coloured tab */
         #detailPanel {
-            display: none; /* Hidden until a dot is clicked */
-            margin-top: 20px;
-            border: 2px solid var(--sika-orange);
-            border-radius: 8px;
-            padding: 20px;
-            background-color: #fff;
+            display: none;
+            margin-top: 34px;
+            position: relative;
+        }
+        #detailPanel.open { display: block; animation: sheet-up .5s var(--ease) both; }
+        .folder-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            height: 40px;
+            padding: 0 22px 0 18px;
+            background: var(--tab, var(--sika-yellow));
+            color: var(--tab-ink, var(--ink));
+            font-weight: 700;
+            font-size: 14px;
+            clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 100%, 0 100%);
+            padding-right: 34px;
+        }
+        .folder-sheet {
+            background: var(--paper);
+            border: 1.5px solid var(--ink);
+            border-top: 6px solid var(--tab, var(--sika-yellow));
+            padding: 24px 26px 22px;
         }
         .detail-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 15px;
+            gap: 16px;
+            margin-bottom: 14px;
         }
         .detail-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: black;
+            font-size: 26px;
+            font-weight: 600;
+            line-height: 1.15;
             margin: 0;
-            max-width: 70%;
+            max-width: 32ch;
         }
-        .tags {
-            display: flex;
-            gap: 10px;
-        }
+        .tags { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
         .tag {
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 12px;
+            padding: 4px 12px;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
         }
-        .tag-category {
-            background-color: #eee;
-            color: #555;
-        }
+        .tag-category { background: var(--concrete); color: var(--ink); }
         .reduction-potential {
-            font-weight: bold;
-            color: var(--sika-orange);
-            margin-bottom: 15px;
-            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            font-size: 15px;
         }
-        .reduction-potential span {
-            color: black;
-            font-weight: normal;
-        }
+        .reduction-potential span { font-weight: 400; color: var(--muted); }
         .action-plan-title {
-            color: var(--sika-orange);
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 17px;
             margin-bottom: 10px;
-            font-size: 16px;
         }
         .action-plan-list {
-            padding-left: 20px;
-            margin-bottom: 20px;
-            line-height: 1.6;
+            list-style: none;
+            counter-reset: step;
+            padding: 0;
+            margin: 0 0 22px;
+            border-top: 1px solid var(--line);
         }
-        .action-plan-list li::marker {
-            font-weight: bold;
+        .action-plan-list li {
+            counter-increment: step;
+            display: grid;
+            grid-template-columns: 38px 1fr;
+            gap: 10px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--line);
+            line-height: 1.5;
         }
+        .action-plan-list li::before {
+            content: counter(step);
+            font-weight: 700;
+            font-size: 15px;
+            width: 28px;
+            height: 28px;
+            display: grid;
+            place-items: center;
+            background: var(--ink);
+            color: var(--sika-yellow);
+        }
+        #detailPanel.open .action-plan-list li { animation: rise .45s var(--ease) both; }
+        #detailPanel.open .action-plan-list li:nth-child(1) { animation-delay: .12s; }
+        #detailPanel.open .action-plan-list li:nth-child(2) { animation-delay: .2s; }
+        #detailPanel.open .action-plan-list li:nth-child(3) { animation-delay: .28s; }
+        #detailPanel.open .action-plan-list li:nth-child(4) { animation-delay: .36s; }
+        #detailPanel.open .action-plan-list li:nth-child(5) { animation-delay: .44s; }
+
         .kpi-row {
             display: flex;
-            gap: 40px;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
+            flex-wrap: wrap;
+            gap: 14px 40px;
+            padding-top: 4px;
         }
-        .kpi {
-            font-size: 14px;
-        }
+        .kpi { font-size: 15px; }
         .kpi-label {
-            color: var(--sika-orange);
-            font-weight: bold;
-            margin-right: 10px;
+            display: block;
+            font-size: 13px;
+            color: var(--muted);
+            font-weight: 500;
         }
-        .kpi-value {
-            font-weight: bold;
-            color: black;
+        .kpi-value { font-weight: 700; font-size: 17px; }
+        .kpi-value.normal { font-weight: 500; font-size: 15px; }
+
+        /* MOTION */
+        @keyframes cut-in { from { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); } }
+        @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+        @keyframes sheet-up { from { opacity: 0; transform: translateY(40px); } }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition: none !important; }
         }
-        .kpi-value.normal {
-            font-weight: normal;
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; padding: 20px 16px 40px; gap: 18px; }
+            .header-inner { padding: 20px 16px; gap: 16px; }
+            header::before { clip-path: polygon(0 0, 88% 0, 78% 100%, 0 100%); }
+            header img { height: 52px; }
+            .chart-box { height: 320px; }
+            .detail-header { flex-direction: column; }
+            .tags { justify-content: flex-start; }
+            .folder-sheet { padding: 18px 16px; }
+            .detail-title { font-size: 22px; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <img src="Logo_Sika_AG.webp" alt="Sika Logo">
-        <h1>Water Management Action Tool</h1>
+        <div class="header-inner">
+            <img src="Logo_Sika_AG.webp" alt="Sika Logo">
+            <h1>Water Management Action Tool</h1>
+        </div>
     </header>
 
     <div class="container">
         <!-- PART 1: Site Characteristics -->
         <div class="left-panel">
-            <h3 style="color: var(--sika-orange); margin-top:0;">1. Site Characteristics</h3>
-            <p style="font-size: 13px; color: #666;">Identify key site criteria driving solution fit:</p>
-            
+            <h3 class="panel-title"><span class="num"><span>1</span></span>Site Characteristics</h3>
+            <p class="panel-intro">Identify key site criteria driving solution fit:</p>
+
             <div class="form-group">
                 <label for="processType">Process Type</label>
                 <select id="processType" onchange="updateChart()">
@@ -209,74 +363,82 @@
                     <option value="new">Modern Plant (<5 years)</option>
                 </select>
             </div>
-            
-            <div style="margin-top: 30px; font-size: 12px; color: #777;">
-                <strong>Legend:</strong><br>
-                <span style="color: var(--sika-orange); font-size:20px;">●</span> Reuse Measure<br>
-                <span style="color: var(--sika-red); font-size:20px;">●</span> Reduce Measure<br>
-                <span style="color: var(--sika-green); font-size:20px;">●</span> Restore Measure
+
+            <div class="legend">
+                <strong>Legend:</strong>
+                <div class="legend-item"><span class="swatch" style="background: var(--sika-yellow)"></span>Reuse Measure</div>
+                <div class="legend-item"><span class="swatch" style="background: var(--sika-red)"></span>Reduce Measure</div>
+                <div class="legend-item"><span class="swatch" style="background: var(--sika-green)"></span>Restore Measure</div>
             </div>
         </div>
 
         <!-- PART 2 & 3: Matrix and Action Plan -->
         <div class="right-panel">
-            <h3 style="color: var(--sika-orange); margin-top:0;">2. Cost / Impact Matrix</h3>
-            <p style="font-size: 13px; color: #666;">Click on a dot to see the implementation toolkit.</p>
-            
+            <h3 class="panel-title"><span class="num"><span>2</span></span>Cost / Impact Matrix</h3>
+            <p class="chart-hint">Click on a dot to see the implementation toolkit.</p>
+
             <!-- The Chart -->
-            <div style="position: relative; height: 350px; width: 100%;">
+            <div class="chart-box">
                 <canvas id="matrixChart"></canvas>
             </div>
 
+            <!-- How to read the matrix -->
+            <ol class="matrix-key" aria-label="How to read the matrix">
+                <li class="k1"><div><strong>Quick Wins</strong><span>Do first. Low cost, high impact. Short-to-medium term.</span></div></li>
+                <li class="k2"><div><strong>Strategic Investments</strong><span>Plan and budget. High impact, higher cost. Medium-to-long term.</span></div></li>
+                <li class="k3"><div><strong>Secondary Improvements</strong><span>Do when convenient. Low cost, smaller impact.</span></div></li>
+                <li class="k4"><div><strong>Deprioritized</strong><span>Only with a clear reason. High cost, smaller impact.</span></div></li>
+            </ol>
+
             <!-- PART 3: The Detailed Toolkit Panel -->
             <div id="detailPanel">
-                <div class="detail-header">
-                    <h2 class="detail-title" id="det-title">Measure Title</h2>
-                    <div class="tags">
-                        <span class="tag tag-category" id="det-tag1">Category</span>
-                        <span class="tag" id="det-tag2">Type</span>
+                <div class="folder-tab" id="det-tag2">Type</div>
+                <div class="folder-sheet">
+                    <div class="detail-header">
+                        <h2 class="detail-title" id="det-title">Measure Title</h2>
+                        <div class="tags">
+                            <span class="tag tag-category" id="det-tag1">Category</span>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="reduction-potential">
-                    Framework: <span id="det-reduction" style="font-weight: normal; color: black;">Standards</span>
-                </div>
 
-                <div class="action-plan-title">Action Plan</div>
-                <ol class="action-plan-list" id="det-steps">
-                    <!-- Steps injected via JS -->
-                </ol>
+                    <div class="reduction-potential">
+                        Framework: <span id="det-reduction">Standards</span>
+                    </div>
 
-                <div class="kpi-row">
-                    <div class="kpi">
-                        <span class="kpi-label">Time Horizon</span>
-                        <span class="kpi-value" id="det-time">4 to 8 months</span>
-                    </div>
-                    <div class="kpi">
-                        <span class="kpi-label">Total investment</span>
-                        <span class="kpi-value" id="det-cost">CHF 600k</span>
-                    </div>
-                </div>
-                <div class="kpi-row" style="border-top: none; padding-top: 10px;">
-                    <div class="kpi">
-                        <span class="kpi-label">Potential contact</span>
-                        <span class="kpi-value normal" id="det-contact">Sika factory reference</span>
+                    <div class="action-plan-title">Action Plan</div>
+                    <ol class="action-plan-list" id="det-steps">
+                        <!-- Steps injected via JS -->
+                    </ol>
+
+                    <div class="kpi-row">
+                        <div class="kpi">
+                            <span class="kpi-label">Time Horizon</span>
+                            <span class="kpi-value" id="det-time">4 to 8 months</span>
+                        </div>
+                        <div class="kpi">
+                            <span class="kpi-label">Total investment</span>
+                            <span class="kpi-value" id="det-cost">CHF 600k</span>
+                        </div>
+                        <div class="kpi">
+                            <span class="kpi-label">Potential contact</span>
+                            <span class="kpi-value normal" id="det-contact">Sika factory reference</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT LOGIC (content unchanged) -->
     <script>
         const allMeasures = [
             {
                 id: 1,
                 title: "Design and install closed-loop wastewater recycling systems.",
-                type: "Reuse", 
+                type: "Reuse",
                 category: "Site-wide",
-                xCost: 8,      
-                yImpact: 9,    
+                xCost: 8,
+                yImpact: 9,
                 reduction: "AWS standards; WBCSD CTI; CDP Water Security",
                 timeHorizon: "6 to 12 months",
                 investment: "CHF 750k",
@@ -292,9 +454,9 @@
             {
                 id: 2,
                 title: "Upgrade manufacturing processes to maximize water efficiency per unit produced.",
-                type: "Reduce", 
+                type: "Reduce",
                 category: "Wash-water (CIP)",
-                xCost: 4, 
+                xCost: 4,
                 yImpact: 6,
                 reduction: "AWS standards, CDP water security, SBTN",
                 timeHorizon: "3 to 6 months",
@@ -311,9 +473,9 @@
             {
                 id: 3,
                 title: "Reformulate product mixes to replace freshwater with recycled process water.",
-                type: "Reuse", 
+                type: "Reuse",
                 category: "Product ingredient",
-                xCost: 5, 
+                xCost: 5,
                 yImpact: 7,
                 reduction: "CDP Water Security; WBCSD CTI (Circular Transition Indicators)",
                 timeHorizon: "4 to 8 months",
@@ -331,23 +493,93 @@
 
         let chartInstance = null;
 
-        const colorOrange = '#FFA51F';
-        const colorRed = '#E2001A';
+        const colorOrange = '#F5B325'; // Sika yellow
+        const colorRed = '#D8282F';    // Sika red
+        const ink = '#1D1D1B';
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // The four boxes of the matrix, in priority order (same names as the TP slides).
+        const QUADRANTS = [
+            { n: 1, name: 'Quick Wins',             sub: 'Short-to-medium term', fill: '#F9CF77', box: 'tl' },
+            { n: 2, name: 'Strategic Investments',  sub: 'Medium-to-long term',  fill: '#FCE6B5', box: 'tr' },
+            { n: 3, name: 'Secondary Improvements', sub: 'When convenient',      fill: '#FCE6B5', box: 'bl' },
+            { n: 4, name: 'Deprioritized',          sub: 'Only with a clear reason', fill: '#F7F4EC', box: 'br' }
+        ];
+
+        // Paints each box in its priority tint and writes its name in the bottom outer corner,
+        // where no measure sits, so labels never hide a dot.
+        const quadrantPlugin = {
+            id: 'quadrants',
+            beforeDatasetsDraw(chart) {
+                const { ctx, chartArea: a, scales: { x, y } } = chart;
+                const midX = x.getPixelForValue(5), midY = y.getPixelForValue(5);
+                const gap = 4;
+                const rects = {
+                    tl: [a.left, a.top, midX - a.left - gap / 2, midY - a.top - gap / 2],
+                    tr: [midX + gap / 2, a.top, a.right - midX - gap / 2, midY - a.top - gap / 2],
+                    bl: [a.left, midY + gap / 2, midX - a.left - gap / 2, a.bottom - midY - gap / 2],
+                    br: [midX + gap / 2, midY + gap / 2, a.right - midX - gap / 2, a.bottom - midY - gap / 2]
+                };
+                const font = getComputedStyle(document.body).fontFamily;
+                const compact = (a.right - a.left) < 520;
+                ctx.save();
+                QUADRANTS.forEach(q => {
+                    const [rx, ry, rw, rh] = rects[q.box];
+                    ctx.fillStyle = q.fill;
+                    ctx.fillRect(rx, ry, rw, rh);
+
+                    const right = q.box === 'tr' || q.box === 'br';
+                    const pad = compact ? 8 : 12;
+                    const baseY = ry + rh - pad;
+                    // name
+                    ctx.fillStyle = '#1D1D1B';
+                    ctx.font = '700 15px ' + font;
+                    ctx.textAlign = right ? 'right' : 'left';
+                    ctx.textBaseline = 'alphabetic';
+                    const tx = right ? rx + rw - pad : rx + pad;
+                    if (!compact) ctx.fillText(q.name, tx, baseY - 20);
+                    // horizon
+                    if (!compact) {
+                        ctx.font = 'italic 500 13px ' + font;
+                        ctx.fillStyle = '#5E646A';
+                        ctx.textAlign = right ? 'right' : 'left';
+                        ctx.textBaseline = 'alphabetic';
+                        ctx.fillText(q.sub, right ? rx + rw - pad : rx + pad, baseY);
+                    }
+                });
+                ctx.restore();
+            }
+        };
 
         function initChart() {
+            Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+            Chart.defaults.color = '#5E646A';
             const ctx = document.getElementById('matrixChart').getContext('2d');
-            
+
             chartInstance = new Chart(ctx, {
                 type: 'scatter',
-                data: {
-                    datasets: []
-                },
+                data: { datasets: [] },
+                plugins: [quadrantPlugin],
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: reduceMotion ? false : {
+                        duration: 700,
+                        easing: 'easeOutBack',
+                        delay: (c) => c.type === 'data' && c.mode === 'default' ? c.dataIndex * 140 + c.datasetIndex * 90 : 0
+                    },
+                    animations: reduceMotion ? {} : {
+                        radius: { from: 0 }
+                    },
                     plugins: {
                         legend: { display: false },
                         tooltip: {
+                            backgroundColor: ink,
+                            titleFont: { weight: '600' },
+                            bodyFont: { size: 13 },
+                            padding: 10,
+                            cornerRadius: 0,
+                            displayColors: false,
                             callbacks: {
                                 label: function(context) {
                                     return context.raw.measure.title;
@@ -357,15 +589,24 @@
                     },
                     scales: {
                         x: {
-                            title: { display: true, text: 'Implementation Cost / Effort (Low to High)', font: {weight: 'bold'} },
+                            title: { display: true, text: 'Implementation Cost / Effort (Low to High)', color: ink, font: { weight: '600', size: 13 } },
                             min: 0,
-                            max: 10
+                            max: 10,
+                            grid: { display: false },
+                            border: { display: false },
+                            ticks: { display: false }
                         },
                         y: {
-                            title: { display: true, text: 'Water Savings Impact (Low to High)', font: {weight: 'bold'} },
+                            title: { display: true, text: 'Water Savings Impact (Low to High)', color: ink, font: { weight: '600', size: 13 } },
                             min: 0,
-                            max: 10
+                            max: 10,
+                            grid: { display: false },
+                            border: { display: false },
+                            ticks: { display: false }
                         }
+                    },
+                    onHover: (event, elements) => {
+                        event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
                     },
                     onClick: (event, elements) => {
                         if (elements.length > 0) {
@@ -380,9 +621,21 @@
             updateChart();
         }
 
+        function pointStyle(color) {
+            return {
+                backgroundColor: color,
+                borderColor: ink,
+                borderWidth: 2,
+                pointRadius: 12,
+                pointHoverRadius: 16,
+                pointHoverBorderColor: ink,
+                pointHoverBorderWidth: 3
+            };
+        }
+
         function updateChart() {
             const filterProcess = document.getElementById('processType').value;
-            
+
             let filteredMeasures = allMeasures.filter(m => {
                 if (filterProcess === 'all') return true;
                 return m.processFit === filterProcess || m.processFit === 'all';
@@ -392,7 +645,7 @@
                 return {
                     x: m.xCost,
                     y: m.yImpact,
-                    measure: m 
+                    measure: m
                 };
             });
 
@@ -400,40 +653,30 @@
             const reduceData = dataPoints.filter(d => d.measure.type === "Reduce");
 
             chartInstance.data.datasets = [
-                {
-                    label: 'Reuse',
-                    data: reuseData,
-                    backgroundColor: colorOrange,
-                    pointRadius: 10,
-                    pointHoverRadius: 12
-                },
-                {
-                    label: 'Reduce',
-                    data: reduceData,
-                    backgroundColor: colorRed,
-                    pointRadius: 10,
-                    pointHoverRadius: 12
-                }
+                Object.assign({ label: 'Reuse', data: reuseData }, pointStyle(colorOrange)),
+                Object.assign({ label: 'Reduce', data: reduceData }, pointStyle(colorRed))
             ];
-            
+
             chartInstance.update();
-            document.getElementById('detailPanel').style.display = 'none';
+            document.getElementById('detailPanel').classList.remove('open');
         }
 
         function displayDetails(measure) {
-            document.getElementById('detailPanel').style.display = 'block';
-            
+            const panel = document.getElementById('detailPanel');
+            panel.classList.remove('open');
+            void panel.offsetWidth; // restart the opening animation
+
             document.getElementById('det-title').innerText = measure.title;
             document.getElementById('det-tag1').innerText = measure.category;
             document.getElementById('det-tag2').innerText = measure.type;
-            
-            const tag2 = document.getElementById('det-tag2');
-            if(measure.type === "Reuse") {
-                tag2.style.backgroundColor = "#ffebd6";
-                tag2.style.color = "var(--sika-orange)";
+
+            // Tab colour follows the measure type
+            if (measure.type === "Reuse") {
+                panel.style.setProperty('--tab', 'var(--sika-yellow)');
+                panel.style.setProperty('--tab-ink', 'var(--ink)');
             } else {
-                tag2.style.backgroundColor = "#fad4d8";
-                tag2.style.color = "var(--sika-red)";
+                panel.style.setProperty('--tab', 'var(--sika-red)');
+                panel.style.setProperty('--tab-ink', '#FFFFFF');
             }
 
             document.getElementById('det-reduction').innerText = measure.reduction;
@@ -442,14 +685,15 @@
             document.getElementById('det-contact').innerText = measure.contact;
 
             const stepsList = document.getElementById('det-steps');
-            stepsList.innerHTML = ""; 
+            stepsList.innerHTML = "";
             measure.steps.forEach(stepText => {
                 const li = document.createElement('li');
-                li.innerHTML = stepText;
+                li.innerHTML = '<span>' + stepText + '</span>';
                 stepsList.appendChild(li);
             });
-            
-            document.getElementById('detailPanel').scrollIntoView({ behavior: 'smooth' });
+
+            panel.classList.add('open');
+            panel.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
         }
 
         window.onload = initChart;

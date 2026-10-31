@@ -141,38 +141,178 @@
             animation: rise .7s .55s var(--ease) both;
         }
 
-        /* FORM CONTROLS, close to sika.com form fields */
-        .form-group { margin-bottom: 18px; }
-        label {
-            display: block;
-            font-weight: 600;
-            font-size: 14px;
-            margin-bottom: 6px;
+        /* ROLE SWITCH */
+        .role-switch {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border: 1.5px solid var(--ink);
+            margin: 4px 0 10px;
         }
-        select {
-            width: 100%;
-            appearance: none;
-            padding: 12px 40px 12px 14px;
-            border: 1.5px solid var(--line);
-            border-radius: 0;
-            background: var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%231D1D1B' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 14px center;
-            font: 500 15px var(--font);
+        .role-switch button {
+            min-height: 46px;
+            padding: 10px 8px;
+            border: 0;
+            background: var(--paper);
             color: var(--ink);
+            font: 600 15px var(--font);
             cursor: pointer;
-            transition: border-color .15s, box-shadow .15s;
+            transition: background-color .2s, color .2s;
         }
-        select:hover { border-color: var(--ink); }
-        select:focus-visible { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px var(--sika-yellow); }
+        .role-switch button + button { border-left: 1.5px solid var(--ink); }
+        .role-switch button:hover { background: var(--concrete); }
+        .role-switch button[aria-pressed="true"] { background: var(--ink); color: var(--sika-yellow); }
+        .role-note { margin: 0; font-size: 14px; color: var(--muted); }
 
-        .legend {
-            margin-top: 30px;
-            padding-top: 18px;
-            border-top: 1px solid var(--line);
-            font-size: 14px;
+        /* LEGEND = FILTERS. Each row: a toggle (mark + name) and an "i" button with the definition. */
+        .filter-group { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); }
+        .filter-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+        .filter-head h4 { margin: 0; font-size: 16px; font-weight: 700; }
+        .filter-hint { margin: 2px 0 10px; font-size: 13px; color: var(--muted); }
+        .text-btn {
+            border: 0; background: none; padding: 4px 0;
+            font: 600 13px var(--font); color: var(--ink);
+            text-decoration: underline; text-underline-offset: 3px;
+            cursor: pointer; white-space: nowrap;
         }
-        .legend strong { display: block; margin-bottom: 8px; }
-        .legend-item { display: flex; align-items: center; gap: 10px; padding: 3px 0; }
-        .swatch { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px rgba(0,0,0,.12); }
+        .legend-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+        .legend-row { position: relative; display: flex; gap: 6px; }
+        .chip {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 44px;
+            padding: 8px 10px;
+            border: 1.5px solid var(--ink);
+            background: var(--paper);
+            color: var(--ink);
+            font: 500 14px var(--font);
+            text-align: left;
+            cursor: pointer;
+            transition: background-color .15s, color .15s, border-color .15s;
+        }
+        .chip .chip-label { flex: 1; min-width: 0; }
+        .chip .mark { width: 22px; height: 22px; flex-shrink: 0; display: block; transition: opacity .15s; }
+        .chip .bar { width: 22px; height: 10px; flex-shrink: 0; transition: opacity .15s; }
+        .chip::after {
+            content: "";
+            width: 18px; height: 18px; flex-shrink: 0;
+            border: 1.5px solid var(--ink);
+            background: var(--ink) no-repeat center / 12px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M1 5l3.5 3.5L11 1.5' fill='none' stroke='%23F5B325' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        }
+        .chip[aria-pressed="false"] { background: var(--concrete); color: var(--muted); border-color: var(--line); }
+        .chip[aria-pressed="false"] .mark, .chip[aria-pressed="false"] .bar { opacity: .35; }
+        .chip[aria-pressed="false"]::after { background: var(--paper); border-color: #9AA0A5; }
+        .chip:hover { border-color: var(--ink); }
+        .info-btn {
+            flex-shrink: 0;
+            width: 44px;
+            border: 1.5px solid var(--line);
+            background: var(--paper);
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            transition: border-color .15s, background-color .15s;
+        }
+        .info-btn span {
+            width: 22px; height: 22px;
+            display: grid; place-items: center;
+            border: 1.5px solid var(--ink);
+            border-radius: 50%;
+            font: 700 13px/1 Georgia, "Times New Roman", serif;
+            font-style: italic;
+            color: var(--ink);
+        }
+        .info-btn:hover { border-color: var(--ink); }
+        .info-btn[aria-expanded="true"] { background: var(--ink); border-color: var(--ink); }
+        .info-btn[aria-expanded="true"] span { border-color: var(--sika-yellow); color: var(--sika-yellow); }
+        .info-pop {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0; right: 0;
+            z-index: 20;
+            padding: 12px 14px 13px;
+            background: var(--ink);
+            color: #FFFFFF;
+            font-size: 14px;
+            line-height: 1.45;
+            box-shadow: 0 8px 20px rgba(29, 29, 27, .25);
+            animation: pop .2s var(--ease) both;
+        }
+        .info-pop::before {
+            content: "";
+            position: absolute;
+            top: -6px; right: 16px;
+            border: 6px solid transparent;
+            border-top: 0;
+            border-bottom-color: var(--ink);
+        }
+        .info-pop strong { display: block; color: var(--sika-yellow); margin-bottom: 2px; }
+        .info-pop p { margin: 0; }
+        .info-pop p + p { margin-top: 6px; color: #D9DBDD; font-size: 13px; }
+
+        /* GROUP BASELINE: minimum requirements, kept out of the matrix */
+        .baseline { border: 1.5px solid var(--ink); margin: 18px 0 28px; }
+        .baseline-head {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px 14px;
+            padding: 12px 16px;
+            background: var(--ink);
+            color: #FFFFFF;
+        }
+        .baseline-head h4 { margin: 0; font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .proposed-tag { font-size: 12px; font-weight: 700; background: var(--sika-yellow); color: var(--ink); padding: 2px 8px; }
+        .baseline-status { font-size: 14px; font-weight: 600; color: var(--sika-yellow); }
+        .baseline-intro { margin: 0; padding: 12px 16px 2px; font-size: 14px; color: var(--muted); max-width: 75ch; }
+        .baseline ul {
+            list-style: none;
+            margin: 0;
+            padding: 4px 16px 12px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+            column-gap: 24px;
+        }
+        .baseline li { border-bottom: 1px solid var(--line); }
+        .baseline label, .baseline .b-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 11px 0;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .baseline .b-item { cursor: default; }
+        .baseline input {
+            width: 20px; height: 20px;
+            margin: 1px 0 0;
+            flex-shrink: 0;
+            accent-color: var(--ink);
+            cursor: pointer;
+        }
+        .baseline .b-dot { width: 10px; height: 10px; margin-top: 7px; flex-shrink: 0; background: var(--ink); transform: rotate(45deg); }
+        .baseline label.done span { text-decoration: line-through; text-decoration-color: var(--muted); color: var(--muted); }
+
+        .sub-title { margin: 0 0 4px; font-size: 19px; font-weight: 700; }
+        .matrix-empty {
+            position: absolute;
+            left: 50%; top: 46%;
+            transform: translate(-50%, -50%);
+            width: min(320px, 80%);
+            padding: 14px 16px;
+            background: var(--paper);
+            border: 1.5px dashed var(--ink);
+            font-size: 14px;
+            text-align: center;
+            pointer-events: none;
+        }
+        .matrix-empty strong { display: block; font-size: 15px; margin-bottom: 2px; }
+        .count { margin: -10px 0 14px; font-size: 14px; color: var(--muted); }
 
         /* MATRIX */
         .chart-hint { font-size: 15px; color: var(--muted); margin: 0 0 18px; }
@@ -206,6 +346,55 @@
 
         @media (max-width: 1100px) { .matrix-key { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
         @media (max-width: 600px) { .matrix-key { grid-template-columns: 1fr; } }
+
+
+        /* "Already in place" */
+        .done-bar { margin: -2px 0 18px; }
+        .done-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 44px;
+            padding: 9px 16px 9px 12px;
+            border: 1.5px solid var(--ink);
+            background: var(--paper);
+            color: var(--ink);
+            font: 600 15px var(--font);
+            cursor: pointer;
+            transition: background-color .2s, color .2s;
+        }
+        .done-btn:hover { background: var(--concrete); }
+        .done-btn[aria-pressed="true"] { background: var(--ink); color: #FFFFFF; }
+        .done-box { width: 18px; height: 18px; border: 1.5px solid var(--ink); background: var(--paper); flex-shrink: 0; }
+        .done-tick {
+            width: 18px; height: 18px; flex-shrink: 0;
+            background: var(--sika-yellow) no-repeat center / 12px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M1 5l3.5 3.5L11 1.5' fill='none' stroke='%231D1D1B' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            animation: pop .25s var(--ease) both;
+        }
+        .done-undo { margin-left: 8px; font-weight: 500; font-size: 13px; color: #C9CCCF; text-decoration: underline; text-underline-offset: 3px; }
+        .hide-done {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: -8px 0 14px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .hide-done[hidden] { display: none; }
+        .hide-done input { width: 18px; height: 18px; margin: 0; accent-color: var(--ink); cursor: pointer; }
+        .det-sec { margin-top: 18px; }
+        .det-sec h3 { margin: 0 0 8px; font-size: 16px; font-weight: 700; }
+        .det-sec ul { margin: 0; padding-left: 20px; }
+        .det-sec li { margin-bottom: 4px; }
+        .det-sec p { margin: 0; }
+        .det-muted { color: var(--muted); }
+        .det-note { margin-top: 20px; padding: 10px 12px; background: var(--concrete); font-size: 14px; }
+        @media (max-width: 600px) {
+            .m-row { grid-template-columns: 24px minmax(0, 1fr); }
+            .m-sites { grid-column: 2; justify-self: start; }
+        }
 
         /* DETAIL PANEL: a folder sheet with a coloured tab */
         #detailPanel {
@@ -321,6 +510,7 @@
         @keyframes cut-in { from { clip-path: polygon(0 0, 0% 0, 0% 100%, 0 100%); } }
         @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
         @keyframes sheet-up { from { opacity: 0; transform: translateY(40px); } }
+        @keyframes pop { from { opacity: 0; transform: translateY(-4px); } }
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation: none !important; transition: none !important; }
         }
@@ -335,7 +525,7 @@
             header.slim .header-inner { --slant: 20px; gap: 10px; padding-right: calc(var(--slant) + 14px); }
             header.slim img { height: 30px; }
             header.slim h1 { font-size: min(3.4vw, 15px); }
-            .chart-box { height: 320px; }
+            .chart-box { height: 360px; }
             .detail-header { flex-direction: column; }
             .tags { justify-content: flex-start; }
             .folder-sheet { padding: 18px 16px; }
@@ -353,52 +543,56 @@
     </header>
 
     <div class="container">
-        <!-- PART 1: Site Characteristics -->
+        <!-- PART 1: Role and legend (the legend doubles as filters) -->
         <div class="left-panel">
-            <h3 class="panel-title"><span class="num"><span>1</span></span>Site Characteristics</h3>
-            <p class="panel-intro">Identify key site criteria driving solution fit:</p>
+            <h3 class="panel-title"><span class="num"><span>1</span></span>Your role</h3>
+            <div class="role-switch" role="group" aria-label="Your role">
+                <button type="button" id="role-site" data-role="site" aria-pressed="true">Site operator</button>
+                <button type="button" id="role-group" data-role="group" aria-pressed="false">Group team</button>
+            </div>
+            <p class="role-note" id="roleNote"></p>
 
-            <div class="form-group">
-                <label for="processType">Process Type</label>
-                <select id="processType" onchange="updateChart()">
-                    <option value="all">All Processes</option>
-                    <option value="batch">Batch Manufacturing</option>
-                    <option value="continuous">Continuous Process</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="waterMix">Water Intake Mix</label>
-                <select id="waterMix">
-                    <option value="groundwater">High Groundwater Dependency</option>
-                    <option value="municipal">Municipal / Tap Water</option>
-                    <option value="surface">Surface Water (River/Lake)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="plantAge">Plant Age</label>
-                <select id="plantAge">
-                    <option value="old">Legacy Plant (>20 years)</option>
-                    <option value="mid">Mid-age Plant (5-20 years)</option>
-                    <option value="new">Modern Plant (<5 years)</option>
-                </select>
-            </div>
+            <section class="filter-group" aria-labelledby="areaTitle">
+                <div class="filter-head">
+                    <h4 id="areaTitle">Water use</h4>
+                    <button type="button" class="text-btn" id="areaAll">Select all</button>
+                </div>
+                <p class="filter-hint" id="areaHint"></p>
+                <ul class="legend-list" id="areaList"></ul>
+            </section>
 
-            <div class="legend">
-                <strong>Legend:</strong>
-                <div class="legend-item"><span class="swatch" style="background: var(--sika-yellow)"></span>Reuse Measure</div>
-                <div class="legend-item"><span class="swatch" style="background: var(--sika-red)"></span>Reduce Measure</div>
-                <div class="legend-item"><span class="swatch" style="background: var(--sika-green)"></span>Restore Measure</div>
-            </div>
+            <section class="filter-group" aria-labelledby="typeTitle">
+                <div class="filter-head">
+                    <h4 id="typeTitle">Type of action</h4>
+                    <button type="button" class="text-btn" id="typeAll">Select all</button>
+                </div>
+                <p class="filter-hint">Colours on the matrix: what the measure does with the water.</p>
+                <ul class="legend-list" id="typeList"></ul>
+            </section>
         </div>
 
         <!-- PART 2 & 3: Matrix and Action Plan -->
         <div class="right-panel">
-            <h3 class="panel-title"><span class="num"><span>2</span></span>Cost / Impact Matrix</h3>
-            <p class="chart-hint">Click on a dot to see the implementation toolkit.</p>
+            <h3 class="panel-title"><span class="num"><span>2</span></span><span id="mainTitle">Measures for your site</span></h3>
+
+            <!-- Group baseline: minimum requirements, outside the matrix -->
+            <section class="baseline" aria-labelledby="baselineTitle">
+                <div class="baseline-head">
+                    <h4 id="baselineTitle"><span id="baselineName">Group standards for every site</span></h4>
+                    <span class="baseline-status" id="baselineStatus"></span>
+                </div>
+                <p class="baseline-intro" id="baselineIntro"></p>
+                <ul id="baselineList"></ul>
+            </section>
+
+            <h4 class="sub-title" id="matrixTitle">Measures your site can choose</h4>
+            <p class="chart-hint" id="matrixHint"></p>
+            <label class="hide-done" id="hideDoneWrap" hidden><input type="checkbox" id="hideDone"><span id="hideDoneText"></span></label>
 
             <!-- The Chart -->
             <div class="chart-box">
-                <canvas id="matrixChart"></canvas>
+                <canvas id="matrixChart" aria-label="Cost and impact matrix"></canvas>
+                <div class="matrix-empty" id="matrixEmpty" hidden></div>
             </div>
 
             <!-- How to read the matrix -->
@@ -420,100 +614,149 @@
                         </div>
                     </div>
 
-                    <div class="reduction-potential">
-                        Framework: <span id="det-reduction">Standards</span>
-                    </div>
-
-                    <div class="action-plan-title">Action Plan</div>
-                    <ol class="action-plan-list" id="det-steps">
-                        <!-- Steps injected via JS -->
-                    </ol>
-
-                    <div class="kpi-row">
-                        <div class="kpi">
-                            <span class="kpi-label">Time Horizon</span>
-                            <span class="kpi-value" id="det-time">4 to 8 months</span>
-                        </div>
-                        <div class="kpi">
-                            <span class="kpi-label">Total investment</span>
-                            <span class="kpi-value" id="det-cost">CHF 600k</span>
-                        </div>
-                        <div class="kpi">
-                            <span class="kpi-label">Potential contact</span>
-                            <span class="kpi-value normal" id="det-contact">Sika factory reference</span>
-                        </div>
-                    </div>
+                    <div id="det-body"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC (content unchanged) -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        const allMeasures = [
-            {
-                id: 1,
-                title: "Design and install closed-loop wastewater recycling systems.",
-                type: "Reuse",
-                category: "Site-wide",
-                xCost: 8,
-                yImpact: 9,
-                reduction: "AWS standards; WBCSD CTI; CDP Water Security",
-                timeHorizon: "6 to 12 months",
-                investment: "CHF 750k",
-                contact: "Production sites that already implemented similar measures: Sika Madrid (Spain) & Sika Dubai (UAE)",
-                processFit: "all",
-                steps: [
-                    "<strong>Source Mapping:</strong> Identify major wastewater streams across the facility.",
-                    "<strong>Treatment Sizing:</strong> Evaluate required membrane or filtration units (e.g., Reverse Osmosis).",
-                    "<strong>Closed-Loop Piping:</strong> Reroute treated water back to facility inputs to prevent discharge.",
-                    "<strong>Monitoring & Control:</strong> Set up automated quality gates for safe closed-loop recirculation."
-                ]
-            },
-            {
-                id: 2,
-                title: "Upgrade manufacturing processes to maximize water efficiency per unit produced.",
-                type: "Reduce",
-                category: "Wash-water (CIP)",
-                xCost: 4,
-                yImpact: 6,
-                reduction: "AWS standards, CDP water security, SBTN",
-                timeHorizon: "3 to 6 months",
-                investment: "CHF 200k",
-                contact: "Production sites that already implemented similar measures: Sika Zurich (Switzerland) & Sika Milan (Italy)",
-                processFit: "batch",
-                steps: [
-                    "<strong>CIP Audit:</strong> Review clean-in-place cycles and rinse durations for batch mixers.",
-                    "<strong>Equipment Automation:</strong> Install automated spray heads and pulsed-rinse controllers.",
-                    "<strong>Recipe Optimization:</strong> Streamline washing steps between color or product batch changes.",
-                    "<strong>Staff Training:</strong> Instruct operators on lean water consumption guidelines during cleaning."
-                ]
-            },
-            {
-                id: 3,
-                title: "Reformulate product mixes to replace freshwater with recycled process water.",
-                type: "Reuse",
-                category: "Product ingredient",
-                xCost: 5,
-                yImpact: 7,
-                reduction: "CDP Water Security; WBCSD CTI (Circular Transition Indicators)",
-                timeHorizon: "4 to 8 months",
-                investment: "CHF 350k",
-                contact: "Production sites that already implemented similar measures: Sika Shanghai (China) & Sika São Paulo (Brazil)",
-                processFit: "batch",
-                steps: [
-                    "<strong>Quality Assessment:</strong> Test chemical compatibility of recycled water streams with product mixes.",
-                    "<strong>Formulation Adjustment:</strong> Adjust admixture recipes to accommodate treated water characteristics.",
-                    "<strong>Compliance Testing:</strong> Conduct laboratory quality validation on finished batches.",
-                    "<strong>Production Rollout:</strong> Standardize recycled water utilization in standard manufacturing runs."
-                ]
-            }
+        /* ------------------------------------------------------------------
+           MEASURES. Empty on purpose: they are added once impact and effort are scored.
+           One object per measure:
+           { id, title, role: 'site' | 'group', type: 'reduce' | 'reuse' | 'prepare' | 'restore' | 'transform',
+             area: one of the area keys below, effort: 0-10, impact: 0-10,
+             framework, timeHorizon, investment, contact, steps: [] }
+           ------------------------------------------------------------------ */
+        const MEASURES = [
+            /* Site-led measures, from Masta "Mesures for tool".
+               Effort, impact, costs, timelines and action plans are DRAFT estimates by the TP team. */
+            {"id": "1", "role": "site", "area": "site", "type": "reduce", "effort": 2.5, "impact": 7, "title": "Deploy smart leak-detection sensors across main pipeline networks.", "framework": "AWS Standard (site water balance); GRI 303-3; CDP Water Security", "steps": ["Baseline: Record normal daily water use per production volume from the main meter.", "Alert: Set an alert threshold, for example 15% above normal use.", "Inspection: When an alert fires, walk the network and repair the leak within the week.", "Review: Report leaks found and water saved every quarter."], "timeHorizon": "1 to 3 months", "investment": "CHF 5–20k", "sika": [], "examples": "Arkema, Holcim"},
+            {"id": "26", "role": "site", "area": "site", "type": "prepare", "effort": 6, "impact": 7.8, "title": "Smart segregation of wastewater streams.", "framework": "AWS Standard; scientific literature (Fab25 case study)", "steps": ["Stream mapping: List every wastewater stream and measure its volume and quality.", "Selection: Identify clean streams that only become unusable when mixed with dirty ones.", "Separation: Install separate piping or collection tanks for the cleanest streams.", "Reuse: Send each stream to a matching use (cleaning, cooling, gardens) or to treatment."], "timeHorizon": "6 to 12 months", "investment": "CHF 50–150k", "sika": [], "examples": ""},
+            {"id": "25", "role": "site", "area": "site", "type": "reduce", "effort": 1.5, "impact": 5.8, "title": "Train employees to identify water-saving opportunities and conduct site assessments to implement and track operational improvements.", "framework": "AWS Standard (awareness); PepsiCo ReCon programme", "steps": ["Training: Run a one-hour session for production and maintenance teams.", "Site walk: Walk the site together and list visible water losses.", "Quick fixes: Give each low-cost fix an owner and a date.", "Follow-up: Review progress every quarter and share the savings with the teams."], "timeHorizon": "1 to 3 months", "investment": "Under CHF 10k", "sika": [], "examples": "PepsiCo"},
+            {"id": "6", "role": "site", "area": "site", "type": "reduce", "effort": 4.5, "impact": 3.5, "title": "Implement rainwater harvesting to reduce withdrawals.", "framework": "AWS Standard; SBTN (alternative water sources)", "steps": ["Feasibility: Estimate the volume from roof area and yearly rainfall.", "Design: Size the gutters, first-flush filter and storage tank.", "Installation: Connect the tank to non-product uses (cleaning, toilets, gardens).", "Monitoring: Meter the rainwater used and check its quality."], "timeHorizon": "6 to 12 months", "investment": "CHF 30–100k", "sika": ["PH Taguig", "CN Xiaogan - Hubei", "Non-Production / New Company"], "examples": "Henkel, LVMH"},
+            {"id": "7", "role": "site", "area": "site", "type": "reuse", "effort": 8.7, "impact": 7.3, "title": "Substitute freshwater with treated municipal wastewater (partnership with water suppliers).", "framework": "SBTN (alternative water sources); CEO Water Mandate", "steps": ["Availability: Ask the city or water utility whether treated wastewater is available near the site.", "Quality check: Compare its quality with your cooling and cleaning requirements.", "Agreement: Agree on volumes, price and quality monitoring.", "Network: Build a separate pipe network for non-product uses."], "timeHorizon": "1 to 2 years", "investment": "CHF 200–500k", "sika": [], "examples": "Holcim, Henkel, Evonik"},
+            {"id": "17", "role": "site", "area": "site", "type": "reduce", "effort": 9, "impact": 5.8, "title": "Partner with neighbouring industries to integrate water systems across geographically close plants.", "framework": "SBTN (collective action); CEO Water Mandate", "steps": ["Mapping: List neighbouring plants with their water needs and discharges.", "Contact: Meet them through the industrial park or the water utility.", "Study: Assess a shared treatment plant or a water exchange.", "Agreement: Set up a contract on volumes, quality and costs."], "timeHorizon": "1 to 3 years", "investment": "CHF 300k–1M, shared", "sika": [], "examples": "BASF (Tarragona)"},
+            {"id": "4", "role": "site", "area": "product", "type": "reuse", "effort": 3, "impact": 8, "title": "Re-use washwater as \"base water\" ingredient for the same product family.", "framework": "CDP Water Security; AWS Standard", "steps": ["Product families: Identify families produced often enough to reuse their rinse water.", "Collection: Store rinse water in a labelled tank for each product family.", "Lab test: Test a batch made with rinse water against product specifications.", "Standardise: Adjust the recipe for the product already in the water and make it standard practice."], "timeHorizon": "3 to 6 months", "investment": "CHF 20–80k", "sika": ["US Fairless Hills", "US Jacksonville", "TH Saraburi"], "examples": "Holcim"},
+            {"id": "2", "role": "site", "area": "cleaning", "type": "reuse", "effort": 2, "impact": 6.5, "title": "Multi-stage rinsing: use clean water only for the final rinse; that once-used rinse water becomes the pre-rinse for the next, dirtier cycle.", "framework": "AWS Standard; CDP Water Security", "steps": ["Collection: Collect the final rinse water in a buffer tank.", "Reuse: Use it for the first rinse of the next cleaning cycle.", "Fresh water: Keep fresh water for the final rinse only.", "Procedure: Write it into the cleaning procedure so every shift does the same."], "timeHorizon": "1 to 3 months", "investment": "CHF 5–20k", "sika": ["IN Kharagpur"], "examples": ""},
+            {"id": "12", "role": "site", "area": "cleaning", "type": "reduce", "effort": 2.5, "impact": 3.5, "title": "Externalise bulk container cleaning to reduce on-site footprint.", "framework": "AWS Standard", "steps": ["Baseline: Count the containers cleaned on site and the water used for each.", "Tender: Compare offers from local cleaning providers.", "Selection: Prefer a provider that recycles its wash water.", "Follow-up: Track the water and wastewater saved on site."], "timeHorizon": "1 to 3 months", "investment": "Operating cost, no investment", "sika": ["RO Ploiesti"], "examples": ""},
+            {"id": "27", "role": "site", "area": "cleaning", "type": "reduce", "effort": 6.5, "impact": 7, "title": "Transition from manual to automated cleaning-in-place.", "framework": "AWS Standard; CDP Water Security", "steps": ["CIP audit: Review cleaning cycles, rinse durations and changeovers.", "Automation: Install spray heads and automated rinse control on the main mixers.", "Recipes: Set time, action, concentration and temperature for each product.", "Scheduling: Group production runs to reduce the number of changeovers."], "timeHorizon": "6 to 12 months", "investment": "CHF 100–300k", "sika": ["PH Taguig"], "examples": "Henkel"},
+            {"id": "28", "role": "site", "area": "cleaning", "type": "reduce", "effort": 3, "impact": 6, "title": "Deploy high-pressure, heated washing systems (pressure does the job that volume used to do).", "framework": "AWS Standard", "steps": ["Inventory: List the cleaning tasks done with open hoses.", "Equipment: Replace hoses with high-pressure washers, heated where useful.", "Training: Show operators how to use the new equipment.", "Measure: Compare the water used per cleaning before and after."], "timeHorizon": "1 to 3 months", "investment": "CHF 10–50k", "sika": ["US Sealy", "US Jacksonville", "US Dunmore"], "examples": ""},
+            {"id": "29", "role": "site", "area": "cleaning", "type": "reduce", "effort": 6.5, "impact": 6, "title": "Move from IBC to bulk delivery.", "framework": "SBTN (value chain); CDP Water Security", "steps": ["Customers: Identify customers who receive large, regular volumes in IBCs.", "Offer: Propose bulk delivery together with the sales team.", "Logistics: Adapt loading and storage for tank trucks.", "Follow-up: Track the number of IBCs washed each month."], "timeHorizon": "1 to 2 years", "investment": "CHF 50–200k", "sika": [], "examples": ""},
+            {"id": "5", "role": "site", "area": "cooling", "type": "reuse", "effort": 7.4, "impact": 8.8, "title": "Install closed-loop cooling systems.", "framework": "AWS Standard; CDP Water Security; SBTN", "steps": ["Mapping: Map the cooling uses and the current cooling system.", "Timing: Plan the switch for when the old system is due for replacement.", "Installation: Install heat exchangers, pumps and a dry cooler for the closed loop.", "Maintenance: Monitor leaks, corrosion and biofouling."], "timeHorizon": "1 to 2 years", "investment": "CHF 300k–1M", "sika": ["CN Shanghai", "US Marion - Ohio", "DE MBCC - Lutherstadt Wittenberg"], "examples": "Henkel, AkzoNobel"},
+            {"id": "14", "role": "site", "area": "cooling", "type": "reuse", "effort": 5.8, "impact": 6.2, "title": "Install open-recirculating (evaporative) cooling systems, as an alternative to a fully closed loop.", "framework": "AWS Standard; scientific literature", "steps": ["Assessment: Check the cooling load and the current once-through use.", "Installation: Install a recirculating cooling tower with water treatment.", "Optimisation: Raise the cycles of concentration to reduce blowdown.", "Maintenance: Keep the tower packing and water treatment in good condition."], "timeHorizon": "6 to 12 months", "investment": "CHF 150–400k", "sika": [], "examples": ""},
+            {"id": "23", "role": "site", "area": "cooling", "type": "reduce", "effort": 8.5, "impact": 4, "title": "Use sea water or another water body as cooling water.", "framework": "SBTN; local intake and discharge permits", "steps": ["Permits: Check intake and discharge rules with local authorities.", "Study: Assess corrosion-resistant equipment and the discharge temperature.", "Installation: Build the intake, heat exchangers and outfall.", "Monitoring: Monitor the effect on the water body."], "timeHorizon": "2 years or more", "investment": "Over CHF 1M", "sika": [], "examples": "Evonik"},
+            {"id": "24", "role": "site", "area": "cooling", "type": "reduce", "effort": 8.2, "impact": 6.1, "title": "Replace water-cooled heat exchangers with air-cooled alternatives where feasible, to reduce cooling-water demand and recover process heat.", "framework": "CDP Water Security; PepsiCo case (Pune)", "steps": ["Screening: Identify the processes that can be cooled by air.", "Space check: Check outdoor space, noise and energy use.", "Installation: Install air-cooled exchangers with heat recovery.", "Follow-up: Measure the cooling water saved and the heat recovered."], "timeHorizon": "1 to 2 years", "investment": "CHF 200–600k", "sika": [], "examples": "PepsiCo"},
+            {"id": "13", "role": "site", "area": "site", "type": "reuse", "effort": 7.6, "impact": 7.8, "title": "Treat and reuse sanitary and office wastewater for production processes.", "framework": "AWS Standard; EN 1008 (mixing water for concrete)", "steps": ["Measurement: Measure the volume and quality of sanitary wastewater.", "Target use: Choose the use: cleaning, cooling, or product water after full treatment.", "Treatment: Install a compact treatment unit, for example filtration and UV.", "Quality control: Test the treated water regularly against the required standard."], "timeHorizon": "1 to 2 years", "investment": "CHF 400–700k", "sika": ["RS Simanovci", "MX Abasolo"], "examples": ""},
+            {"id": "30", "role": "site", "area": "site", "type": "reuse", "effort": 8, "impact": 4.5, "title": "Recover water from used cleaning water by evaporation.", "framework": "Scientific literature (minimised liquid discharge)", "steps": ["Volume: Measure the volume and composition of cleaning wastewater.", "Study: Size an evaporator with a supplier, including its energy use.", "Installation: Install the evaporator and condensate collection.", "Reuse: Reuse the condensate for cleaning or cooling."], "timeHorizon": "1 to 2 years", "investment": "CHF 300–800k", "sika": [], "examples": ""},
+            {"id": "19", "role": "site", "area": "site", "type": "reuse", "effort": 2, "impact": 2.5, "title": "Use wastewater for gardening.", "framework": "AWS Standard", "steps": ["Measure: Estimate the water used for gardening.", "Source: Connect irrigation to treated wastewater or rainwater.", "Schedule: Water early or late in the day, and less in summer.", "Planting: Replace thirsty plants with local, drought-resistant species."], "timeHorizon": "1 to 3 months", "investment": "CHF 5–20k", "sika": [], "examples": "Henkel (Bay Point)"},
+            {"id": "16", "role": "site", "area": "beyond", "type": "restore", "effort": 3.5, "impact": 3, "title": "Collaborate with local water associations and NGOs on watershed health.", "framework": "AWS Standard (stakeholder engagement); SBTN", "steps": ["Mapping: Identify the associations and NGOs active on your watershed.", "Meeting: Meet them and share your site water data.", "Project: Join or support one local project.", "Reporting: Report the partnership in the yearly sustainability data."], "timeHorizon": "3 to 6 months", "investment": "CHF 10–50k per year", "sika": [], "examples": "Henkel, LVMH, Lonza"},
+            {"id": "21", "role": "site", "area": "beyond", "type": "restore", "effort": 7, "impact": 3.8, "title": "Restore watersheds through reforestation and improved soil management, to reduce runoff and erosion and protect local water resources.", "framework": "SBTN (Restore and Regenerate); TNFD", "steps": ["Partners: Partner with local authorities and NGOs.", "Site choice: Choose areas where restoration benefits local water.", "Project: Fund reforestation and better soil management.", "Monitoring: Follow the results over several years."], "timeHorizon": "2 years or more", "investment": "CHF 100–500k", "sika": [], "examples": "BASF (Guaratinguetá)"},
+            {"id": "22", "role": "site", "area": "beyond", "type": "restore", "effort": 6, "impact": 2.5, "title": "Collaborate with local research institutes to identify and promote water-saving practices among end users and local communities.", "framework": "SBTN (Regenerate)", "steps": ["Contact: Approach a local university or research institute.", "Scope: Define a joint project on water-saving practices.", "Pilot: Test the practices with customers or local communities.", "Sharing: Share the results locally."], "timeHorizon": "1 to 2 years", "investment": "CHF 20–100k", "sika": [], "examples": "BASF (IRRI)"},
+            /* Group-led measures, from Masta "Mesures for tool". Effort, impact, costs, timelines and action plans are DRAFT estimates. */
+            {"id": "K", "role": "group", "area": "governance", "type": "prepare", "effort": 2, "impact": 7, "title": "Optimise and improve best-practice sharing between production sites.", "framework": "AWS Standard; CDP Water Security", "steps": ["Library: Turn the Initiative Tracker into a searchable library of water measures.", "Contacts: Name a contact person for each measure.", "Exchange: Hold a yearly water call between sites.", "Recognition: Highlight the best site projects each year."], "timeHorizon": "3 to 6 months", "investment": "CHF 10–50k", "sika": [], "contact": "Group Sustainability", "examples": "Arkema"},
+            {"id": "E", "role": "group", "area": "rnd", "type": "reduce", "effort": 7, "impact": 7.5, "title": "Reformulate existing product lines to incrementally lower their embedded water.", "framework": "CDP Water Security; SBTN", "steps": ["Screening: Rank product lines by the water they contain and their volumes.", "Targets: Set a water reduction target for each product line.", "Reformulation: Adjust recipes without moving the water use to customers.", "Rollout: Release the new recipes to sites with clear instructions."], "timeHorizon": "1 to 3 years", "investment": "CHF 300k–1M", "sika": [], "contact": "Group R&D, target market managers", "examples": ""},
+            {"id": "M", "role": "group", "area": "rnd", "type": "reduce", "effort": 8.5, "impact": 7.9, "title": "R&D on products that need less water, without shifting water use to the customer.", "framework": "SBTN (Transform); CDP Water Security", "steps": ["Goal: Set a group R&D goal for low-water products.", "Portfolio: Add water criteria to the product development gates.", "Pilots: Develop and test prototypes with key customers.", "Scale: Launch the products that cut water across the value chain."], "timeHorizon": "2 years or more", "investment": "Over CHF 1M", "sika": [], "contact": "Group R&D", "examples": "Henkel"},
+            {"id": "N", "role": "group", "area": "rnd", "type": "reduce", "effort": 7.8, "impact": 6.3, "title": "R&D on processes that need less cooling.", "framework": "CDP Water Security; SBTN", "steps": ["Hotspots: Identify the processes with the highest cooling load, such as membranes and adhesives.", "Options: Study lower-temperature processes and heat recovery.", "Pilot: Test the best option at one site.", "Standard: Add it to the design standard for new production lines."], "timeHorizon": "1 to 3 years", "investment": "CHF 300k–1M", "sika": [], "contact": "Group R&D, Global Engineering", "examples": ""},
+            {"id": "3", "role": "group", "area": "rnd", "type": "reuse", "effort": 6.3, "impact": 6.8, "title": "Reformulate product mixes to replace virgin freshwater with recycled water.", "framework": "CDP Water Security; EN 1008 (mixing water for concrete)", "steps": ["Quality limits: Define the water quality each product family can accept.", "Sources: Identify recycled water streams that meet those limits.", "Validation: Test products made with recycled water in the lab.", "Guideline: Publish a group guideline for sites."], "timeHorizon": "1 to 2 years", "investment": "CHF 100–300k", "sika": [], "contact": "Group R&D, Quality", "examples": "Evonik (Dombivli)"},
+            {"id": "B", "role": "group", "area": "rnd", "type": "reduce", "effort": 8, "impact": 4, "title": "Create concentrated powder formulations to be mixed with water at the point of use, lowering water dependence at site level.", "framework": "SBTN (Transform); CDP Water Security", "steps": ["Screening: Identify liquid products that could be sold as powder or concentrate.", "Customer check: Check that customers can mix on site without using more water overall.", "Pilot: Launch a concentrated version of one product line.", "Review: Compare water use at the plant and at the customer before scaling."], "timeHorizon": "2 years or more", "investment": "CHF 500k–2M", "sika": [], "contact": "Group R&D, Product management", "examples": "Henkel"},
+            {"id": "C", "role": "group", "area": "rnd", "type": "transform", "effort": 7.5, "impact": 4.5, "title": "Phase out hazardous process chemicals to safeguard downstream ecosystems and enable internal recycling.", "framework": "SBTN (Transform); ZDHC; REACH", "steps": ["Inventory: List the hazardous substances used in processes and cleaning.", "Substitution: Find safer alternatives with R&D and suppliers.", "Trials: Test the alternatives at pilot sites.", "Phase-out: Set a group timeline and update the specifications."], "timeHorizon": "2 years or more", "investment": "CHF 200k–1M", "sika": [], "contact": "Group R&D, EHS", "examples": "Henkel, LVMH (ZDHC)"},
+            {"id": "F", "role": "group", "area": "supply", "type": "prepare", "effort": 4, "impact": 4, "title": "Mandate upstream supplier water risk screening and audits.", "framework": "SBTN (value chain); Together for Sustainability; CDP Supply Chain", "steps": ["Mapping: Map key supplier sites and their locations.", "Screening: Screen them with WRI Aqueduct or the WWF Water Risk Filter.", "Audits: Audit high-risk suppliers through Together for Sustainability.", "Follow-up: Agree improvement plans with them."], "timeHorizon": "6 to 12 months", "investment": "CHF 50–150k", "sika": [], "contact": "Group Procurement, Sustainability", "examples": "Holcim, Lonza"},
+            {"id": "L", "role": "group", "area": "supply", "type": "transform", "effort": 3, "impact": 3, "title": "Initiate a training programme for suppliers on water use.", "framework": "Together for Sustainability; SBTN (value chain)", "steps": ["Code of conduct: Add responsible water use to the supplier code of conduct.", "Content: Prepare short training on water efficiency and water risk.", "Delivery: Run webinars with priority suppliers.", "Tracking: Follow participation and supplier progress."], "timeHorizon": "6 to 12 months", "investment": "CHF 20–80k", "sika": [], "contact": "Group Procurement", "examples": "LVMH"},
+            {"id": "15", "role": "group", "area": "supply", "type": "transform", "effort": 6.8, "impact": 5.6, "title": "Partner with local water suppliers and authorities to develop a strategic sourcing plan that relieves pressure on high-risk local water sources.", "framework": "SBTN (collective action); CEO Water Mandate", "steps": ["Priority basins: Select the water-stressed basins with several Sika sites.", "Dialogue: Meet water utilities and authorities in those basins.", "Plan: Agree on sourcing options that reduce pressure on stressed sources.", "Review: Revisit the plan every few years."], "timeHorizon": "1 to 2 years", "investment": "CHF 50–200k", "sika": [], "contact": "Group Sustainability, Area management", "examples": ""},
+            {"id": "H", "role": "group", "area": "strategy", "type": "transform", "effort": 2.5, "impact": 4.2, "title": "Shift marketing focus to promote low-water-input products.", "framework": "SBTN (Transform)", "steps": ["Identify: List the products with low water input.", "Message: Prepare simple water claims backed by data.", "Promote: Highlight them in sales material and tenders.", "Track: Follow their share of sales."], "timeHorizon": "6 to 12 months", "investment": "CHF 50–150k", "sika": [], "contact": "Marketing, target market managers", "examples": "Holcim"},
+            {"id": "I", "role": "group", "area": "strategy", "type": "transform", "effort": 9.3, "impact": 7.1, "title": "Relocate highly water-intensive activities away from water-stressed regions.", "framework": "SBTN (Transform); TCFD (physical risk)", "steps": ["Exposure: Rank sites by water intensity and water stress.", "Criteria: Add water risk to site selection for new plants.", "Options: Study moving the most exposed activities at the next major investment.", "Decision: Decide case by case with Area management."], "timeHorizon": "2 years or more", "investment": "Over CHF 1M", "sika": [], "contact": "Group Operations, Strategy", "examples": ""},
+            {"id": "G", "role": "group", "area": "beyond", "type": "restore", "effort": 6, "impact": 3, "title": "Integrate nature-based solutions and site soil rehabilitation.", "framework": "SBTN (Regenerate); TNFD", "steps": ["Guideline: Write a group guideline on nature-based solutions for sites.", "Pilot: Test de-sealing soils and native planting at one site.", "Rollout: Extend to sites with suitable land.", "Reporting: Report the area restored each year."], "timeHorizon": "1 to 2 years", "investment": "CHF 50–300k", "sika": [], "contact": "Group Sustainability, Area EHS", "examples": "Lonza"},
+            {"id": "8", "role": "group", "area": "beyond", "type": "restore", "effort": 7, "impact": 3.5, "title": "Invest in community WASH (water, sanitation and hygiene) and watershed replenishment.", "framework": "SBTN (Restore); CEO Water Mandate; SDG 6", "steps": ["Needs: Identify water needs near priority sites with local partners.", "Partner: Choose an NGO with a track record in the area.", "Funding: Fund projects and agree on the results to track.", "Reporting: Report volumes replenished and people reached."], "timeHorizon": "1 to 3 years", "investment": "CHF 100–500k per year", "sika": [], "contact": "Group Sustainability, Sika Cares", "examples": "Holcim, Henkel, LVMH, Lonza, PepsiCo"}
         ];
+
+        /* Type of action = colour. Based on the SBTN AR3T framework, simplified for site use. */
+        const TYPES = {
+            reduce:    { label: 'Reduce',               color: '#D8282F', def: 'Use less water for the same result.' },
+            reuse:     { label: 'Reuse',                color: '#1F6FB2', def: 'Use water a second time instead of discharging it, with or without treatment.' },
+            prepare:   { label: 'Prepare',              color: '#4B5560', def: 'Measure, map or study first, so the right measures can be chosen and their results checked.' },
+            restore:   { label: 'Restore & regenerate', color: '#2E7D4F', def: 'Improve the water and nature around the site, outside the fence, with local partners.' },
+            transform: { label: 'Transform',            color: '#7A4FA3', def: 'Change how the group works: products, processes, suppliers or strategy.' }
+        };
+
+        /* Area = shape. Different areas for each role. */
+        const ROLES = {
+            site: {
+                note: 'Check what every site must have in place, then choose the measures that fit your site.',
+                mainTitle: 'Measures for your site',
+                matrixTitle: 'Measures your site can choose',
+                areaTitle: 'Water use on your site',
+                areaHint: 'Shapes on the matrix: where the measure saves water.',
+                types: ['reduce', 'reuse', 'prepare', 'restore'],
+                areas: [
+                    { key: 'cleaning', shape: 'circle',   label: 'Cleaning',         def: 'Rinsing mixers, tanks, lines, containers and trucks.' },
+                    { key: 'cooling',  shape: 'square',   label: 'Cooling',          def: 'Water used to cool processes: cooling towers, heat exchangers, jackets.' },
+                    { key: 'product',  shape: 'triangle', label: 'Product water',    def: 'Water that ends up in the product. It must be fit for human consumption.' },
+                    { key: 'site',     shape: 'diamond',  label: 'Whole site',       def: 'Metering and leak detection, other water sources, treatment and reuse, toilets, canteen and gardens.' },
+                    { key: 'beyond',   shape: 'hexagon',  label: 'Beyond the fence', def: 'Actions outside the site with local partners, for the watershed and nearby communities.' }
+                ],
+                baselineName: 'Group standards for every site',
+                baselineIntro: 'Start with these, then move on to the measures below. Tick what your site already has.'
+            },
+            group: {
+                note: 'Follow the baseline set for all sites, then choose the measures headquarters leads.',
+                mainTitle: 'Measures led by the group',
+                matrixTitle: 'Measures headquarters can choose',
+                areaTitle: 'Area',
+                areaHint: 'Shapes on the matrix: which part of the business the measure changes.',
+                types: ['reduce', 'reuse', 'prepare', 'restore', 'transform'],
+                areas: [
+                    { key: 'rnd',        shape: 'circle',   label: 'R&D: products and processes', def: 'Products and processes that need less water, without moving the water use to customers.' },
+                    { key: 'supply',     shape: 'square',   label: 'Supply chain',                def: 'Water use and water risk at suppliers: screening, audits and training.' },
+                    { key: 'strategy',   shape: 'triangle', label: 'Strategy and portfolio',      def: 'Water in decisions on products, markets and site locations.' },
+                    { key: 'governance', shape: 'diamond',  label: 'Governance and sharing',      def: 'Targets, budgets and rules that make site action easier, and sharing what works between sites.' },
+                    { key: 'beyond',     shape: 'hexagon',  label: 'Beyond the fence',            def: 'Group-funded programmes for water access and watershed health.' }
+                ],
+                baselineName: 'Group standards for every site',
+                baselineIntro: 'Define each standard and support the sites that need help to meet it.'
+            }
+        };
+
+        /* Minimum requirements (Masta "Mesures for tool"). Proposed by the TP team, to be validated by Sika. */
+        const BASELINE = [
+            { id: 'A',  label: 'Meter water at each main use' },
+            { id: '18', label: 'Run a local water risk assessment' },
+            { id: 'J',  label: 'Have a plan for water shortages' },
+            { id: 'D',  label: 'Meet the group standard for discharge quality' },
+            { id: '11', label: 'Train all staff on responsible water use' }
+        ];
+
+        /* Shapes, drawn on a 32x32 grid */
+        const SHAPE_SVG = {
+            circle:   '<circle cx="16" cy="16" r="13"/>',
+            square:   '<rect x="4" y="4" width="24" height="24"/>',
+            triangle: '<path d="M16 3 L30 28 H2 Z"/>',
+            diamond:  '<path d="M16 1.5 L30.5 16 L16 30.5 L1.5 16 Z"/>',
+            hexagon:  '<path d="M16 2 L28.5 9 V23 L16 30 L3.5 23 V9 Z"/>'
+        };
+        function shapeSvg(shape, fill, extraClass) {
+            return '<svg class="' + (extraClass || 'mark') + '" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><g fill="' + fill + '" stroke="#1D1D1B" stroke-width="2" stroke-linejoin="round">' + SHAPE_SVG[shape] + '</g></svg>';
+        }
+
+        /* ---------- State, kept in this browser ---------- */
+        const STORE = 'sika-water-tool';
+        function load() { try { return JSON.parse(localStorage.getItem(STORE)) || {}; } catch (e) { return {}; } }
+        function save() { try { localStorage.setItem(STORE, JSON.stringify({ role: state.role, baseline: state.baseline, done: state.done, hideDone: state.hideDone })); } catch (e) {} }
+        const saved = load();
+        const state = {
+            role: saved.role === 'group' ? 'group' : 'site',
+            baseline: saved.baseline || {},
+            done: saved.done || {},
+            hideDone: !!saved.hideDone,
+            filters: {
+                site:  { areas: new Set(ROLES.site.areas.map(a => a.key)),  types: new Set(ROLES.site.types) },
+                group: { areas: new Set(ROLES.group.areas.map(a => a.key)), types: new Set(ROLES.group.types) }
+            }
+        };
 
         let chartInstance = null;
 
-        const colorOrange = '#F5B325'; // Sika yellow
-        const colorRed = '#D8282F';    // Sika red
         const ink = '#1D1D1B';
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -549,7 +792,8 @@
 
                     const right = q.box === 'tr' || q.box === 'br';
                     const pad = compact ? 8 : 12;
-                    const baseY = ry + rh - pad;
+                    const top = q.box === 'tl' || q.box === 'tr';
+                    const baseY = top ? ry + pad + 34 : ry + rh - pad;
                     // name
                     ctx.fillStyle = '#1D1D1B';
                     ctx.font = '700 15px ' + font;
@@ -578,14 +822,14 @@
             chartInstance = new Chart(ctx, {
                 type: 'scatter',
                 data: { datasets: [] },
-                plugins: [quadrantPlugin],
+                plugins: [quadrantPlugin, marksPlugin],
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     animation: reduceMotion ? false : {
                         duration: 700,
                         easing: 'easeOutBack',
-                        delay: (c) => c.type === 'data' && c.mode === 'default' ? c.dataIndex * 140 + c.datasetIndex * 90 : 0
+                        delay: (c) => c.type === 'data' && c.mode === 'default' ? c.dataIndex * 35 : 0
                     },
                     animations: reduceMotion ? {} : {
                         radius: { from: 0 }
@@ -601,7 +845,12 @@
                             displayColors: false,
                             callbacks: {
                                 label: function(context) {
-                                    return context.raw.measure.title;
+                                    const words = context.raw.measure.title.split(' ');
+                                    const lines = []; let line = '';
+                                    words.forEach(w => { if ((line + ' ' + w).trim().length > 46) { lines.push(line); line = w; } else { line = (line + ' ' + w).trim(); } });
+                                    if (line) lines.push(line);
+                                    if (isDone(context.raw.measure)) lines.push('Already in place on your site');
+                                    return lines;
                                 }
                             }
                         }
@@ -640,80 +889,327 @@
             updateChart();
         }
 
-        function pointStyle(color) {
-            return {
-                backgroundColor: color,
-                borderColor: ink,
-                borderWidth: 2,
-                pointRadius: 12,
-                pointHoverRadius: 16,
-                pointHoverBorderColor: ink,
-                pointHoverBorderWidth: 3
-            };
+        /* Marks are drawn by a plugin as vector shapes, so they stay sharp and small on every screen.
+           Chart.js keeps an invisible circle under each mark for hover and click. */
+        const SHAPE_PATH = {
+            circle: 'M29 16 A13 13 0 1 1 3 16 A13 13 0 1 1 29 16 Z',
+            square: 'M4 4 H28 V28 H4 Z',
+            triangle: 'M16 3 L30 28 H2 Z',
+            diamond: 'M16 1.5 L30.5 16 L16 30.5 L1.5 16 Z',
+            hexagon: 'M16 2 L28.5 9 V23 L16 30 L3.5 23 V9 Z'
+        };
+        const CHECK_PATH = 'M10 16.5 L14.2 20.7 L22.5 12';
+        const MARK_R = 10;
+        function isDone(m) { return state.role === 'site' && !!state.done[m.id]; }
+        function drawMark(c, shape, x, y, size, done, color) {
+            c.save();
+            c.translate(x - size / 2, y - size / 2);
+            c.scale(size / 32, size / 32);
+            const p = new Path2D(SHAPE_PATH[shape]);
+            c.lineJoin = 'round';
+            c.lineWidth = 1.6 * 32 / size;
+            c.fillStyle = done ? '#FFFFFF' : color;
+            c.strokeStyle = done ? '#8C9298' : ink;
+            c.fill(p); c.stroke(p);
+            if (done) {
+                c.lineWidth = 3.4; c.lineCap = 'round'; c.strokeStyle = '#5E646A';
+                c.stroke(new Path2D(CHECK_PATH));
+            }
+            c.restore();
+        }
+        const marksPlugin = {
+            id: 'marks',
+            afterDatasetsDraw(chart) {
+                const ds = chart.data.datasets[0];
+                if (!ds) return;
+                const meta = chart.getDatasetMeta(0);
+                const base = chart.width < 520 ? 15 : 19;
+                const idx = ds.data.map((d, i) => i)
+                    .sort((a, b) => (isDone(ds.data[b].measure) ? 1 : 0) - (isDone(ds.data[a].measure) ? 1 : 0));
+                idx.forEach(i => {
+                    const el = meta.data[i];
+                    const m = ds.data[i].measure;
+                    if (!el || !m) return;
+                    const r = el.options && Number.isFinite(el.options.radius) ? el.options.radius : MARK_R;
+                    const size = base * r / MARK_R;
+                    if (size < 1) return;
+                    drawMark(chart.ctx, areaOf(m).shape, el.x, el.y, size, isDone(m), TYPES[m.type].color);
+                });
+            }
+        };
+        function areaOf(m) { return ROLES[m.role].areas.find(a => a.key === m.area); }
+
+        function updateChart(keepPanel) {
+            const role = state.role;
+            const f = state.filters[role];
+            const all = MEASURES.filter(m => m.role === role);
+            const visible = all.filter(m =>
+                f.areas.has(m.area) && f.types.has(m.type) &&
+                !(state.hideDone && isDone(m)) &&
+                Number.isFinite(m.effort) && Number.isFinite(m.impact));
+
+            chartInstance.data.datasets = [{
+                label: 'Measures',
+                data: visible.map(m => ({ x: m.effort, y: m.impact, measure: m })),
+                pointStyle: 'circle',
+                pointRadius: MARK_R,
+                pointHoverRadius: MARK_R * 1.3,
+                pointHitRadius: 4,
+                backgroundColor: 'rgba(0,0,0,0)',
+                borderColor: 'rgba(0,0,0,0)',
+                hoverBackgroundColor: 'rgba(0,0,0,0)',
+                hoverBorderColor: 'rgba(0,0,0,0)'
+            }];
+            chartInstance.update(keepPanel ? 'none' : undefined);
+
+            const empty = document.getElementById('matrixEmpty');
+            const scored = all.filter(m => Number.isFinite(m.effort) && Number.isFinite(m.impact));
+            if (all.length && !scored.length) {
+                empty.innerHTML = '<strong>Not scored yet</strong>The measures are listed below. They will move here once impact and effort are scored.';
+                empty.hidden = false;
+            } else if (!all.length) {
+                empty.innerHTML = '<strong>No measures added yet</strong>They will appear here once impact and effort are scored.';
+                empty.hidden = false;
+            } else if (!visible.length) {
+                empty.innerHTML = '<strong>Nothing matches your selection</strong>Tick more options on the left.';
+                empty.hidden = false;
+            } else {
+                empty.hidden = true;
+            }
+            const doneCount = all.filter(m => isDone(m)).length;
+            const hideWrap = document.getElementById('hideDoneWrap');
+            hideWrap.hidden = role !== 'site' || doneCount === 0;
+            document.getElementById('hideDone').checked = !!state.hideDone;
+            document.getElementById('hideDoneText').textContent = 'Hide the ' + (doneCount === 1 ? 'measure' : doneCount + ' measures') + ' already in place on your site';
+            if (!keepPanel) document.getElementById('detailPanel').classList.remove('open');
         }
 
-        function updateChart() {
-            const filterProcess = document.getElementById('processType').value;
-
-            let filteredMeasures = allMeasures.filter(m => {
-                if (filterProcess === 'all') return true;
-                return m.processFit === filterProcess || m.processFit === 'all';
-            });
-
-            const dataPoints = filteredMeasures.map(m => {
-                return {
-                    x: m.xCost,
-                    y: m.yImpact,
-                    measure: m
-                };
-            });
-
-            const reuseData = dataPoints.filter(d => d.measure.type === "Reuse");
-            const reduceData = dataPoints.filter(d => d.measure.type === "Reduce");
-
-            chartInstance.data.datasets = [
-                Object.assign({ label: 'Reuse', data: reuseData }, pointStyle(colorOrange)),
-                Object.assign({ label: 'Reduce', data: reduceData }, pointStyle(colorRed))
-            ];
-
-            chartInstance.update();
-            document.getElementById('detailPanel').classList.remove('open');
+        function sitesLabel(m) {
+            const n = (m.sika || []).length;
+            return n === 0 ? 'No Sika site yet' : n === 1 ? '1 Sika site' : n + ' Sika sites';
         }
+        const TYPE_ORDER = ['reduce', 'reuse', 'prepare', 'restore', 'transform'];
 
         function displayDetails(measure) {
             const panel = document.getElementById('detailPanel');
             panel.classList.remove('open');
             void panel.offsetWidth; // restart the opening animation
 
+            const type = TYPES[measure.type];
             document.getElementById('det-title').innerText = measure.title;
-            document.getElementById('det-tag1').innerText = measure.category;
-            document.getElementById('det-tag2').innerText = measure.type;
+            document.getElementById('det-tag1').innerText = areaOf(measure).label;
+            document.getElementById('det-tag2').innerText = type.label;
 
-            // Tab colour follows the measure type
-            if (measure.type === "Reuse") {
-                panel.style.setProperty('--tab', 'var(--sika-yellow)');
-                panel.style.setProperty('--tab-ink', 'var(--ink)');
-            } else {
-                panel.style.setProperty('--tab', 'var(--sika-red)');
-                panel.style.setProperty('--tab-ink', '#FFFFFF');
+            // Tab colour follows the type of action
+            panel.style.setProperty('--tab', type.color);
+            panel.style.setProperty('--tab-ink', '#FFFFFF');
+
+            const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+            let html = '';
+            if (state.role === 'site') {
+                html += '<div class="done-bar"><button type="button" class="done-btn" id="doneBtn" aria-pressed="' + isDone(measure) + '"></button></div>';
             }
-
-            document.getElementById('det-reduction').innerText = measure.reduction;
-            document.getElementById('det-time').innerText = measure.timeHorizon;
-            document.getElementById('det-cost').innerText = measure.investment;
-            document.getElementById('det-contact').innerText = measure.contact;
-
-            const stepsList = document.getElementById('det-steps');
-            stepsList.innerHTML = "";
-            measure.steps.forEach(stepText => {
-                const li = document.createElement('li');
-                li.innerHTML = '<span>' + stepText + '</span>';
-                stepsList.appendChild(li);
-            });
+            if (measure.framework) {
+                html += '<div class="reduction-potential">Framework: <span>' + esc(measure.framework) + '</span></div>';
+            }
+            if (measure.steps && measure.steps.length) {
+                html += '<div class="action-plan-title">Action Plan</div><ol class="action-plan-list">' +
+                    measure.steps.map(st => {
+                        const i = st.indexOf(': ');
+                        return '<li><span>' + (i > 0 ? '<strong>' + esc(st.slice(0, i)) + ':</strong> ' + esc(st.slice(i + 2)) : esc(st)) + '</span></li>';
+                    }).join('') + '</ol>';
+            }
+            const sites = measure.sika || [];
+            html += '<div class="kpi-row">' +
+                '<div class="kpi"><span class="kpi-label">Time Horizon</span><span class="kpi-value">' + esc(measure.timeHorizon || 'To be defined') + '</span></div>' +
+                '<div class="kpi"><span class="kpi-label">Total investment</span><span class="kpi-value">' + esc(measure.investment || 'To be defined') + '</span></div>' +
+                '</div>' +
+                '<div class="kpi-row" style="border-top: none; padding-top: 14px;">' +
+                '<div class="kpi"><span class="kpi-label">' + (measure.contact ? 'Who leads it' : 'Potential contact') + '</span><span class="kpi-value normal">' +
+                (measure.contact ? esc(measure.contact) : sites.length ? 'Sika sites that already implemented this measure: ' + esc(sites.join(', ')) : 'No Sika site reported yet. Ask the Group sustainability team.') +
+                '</span></div>' +
+                (measure.examples ? '<div class="kpi"><span class="kpi-label">Examples elsewhere</span><span class="kpi-value normal">' + esc(measure.examples) + '</span></div>' : '') +
+                '</div>';
+            document.getElementById('det-body').innerHTML = html;
+            const doneBtn = document.getElementById('doneBtn');
+            if (doneBtn) {
+                const paint = () => {
+                    const on = isDone(measure);
+                    doneBtn.setAttribute('aria-pressed', String(on));
+                    doneBtn.innerHTML = on
+                        ? '<span class="done-tick" aria-hidden="true"></span>Already in place on your site<span class="done-undo">Undo</span>'
+                        : '<span class="done-box" aria-hidden="true"></span>Our site already does this';
+                };
+                paint();
+                doneBtn.addEventListener('click', () => {
+                    if (isDone(measure)) delete state.done[measure.id]; else state.done[measure.id] = new Date().toISOString().slice(0, 10);
+                    save();
+                    paint();
+                    updateChart(true);
+                });
+            }
 
             panel.classList.add('open');
             panel.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
         }
+
+        /* ---------- Legend rows (toggle + "i" definition) ---------- */
+        let openInfo = null;
+        function closeInfo() {
+            if (!openInfo) return;
+            openInfo.btn.setAttribute('aria-expanded', 'false');
+            openInfo.pop.hidden = true;
+            openInfo = null;
+        }
+        function legendRow(id, markHtml, label, pressed, onToggle, infoHtml) {
+            const li = document.createElement('li');
+            li.className = 'legend-row';
+            const chip = document.createElement('button');
+            chip.type = 'button';
+            chip.className = 'chip';
+            chip.setAttribute('aria-pressed', String(pressed));
+            chip.innerHTML = markHtml + '<span class="chip-label">' + label + '</span>';
+            chip.addEventListener('click', () => {
+                const on = chip.getAttribute('aria-pressed') !== 'true';
+                chip.setAttribute('aria-pressed', String(on));
+                onToggle(on);
+            });
+            const info = document.createElement('button');
+            info.type = 'button';
+            info.className = 'info-btn';
+            info.setAttribute('aria-expanded', 'false');
+            info.setAttribute('aria-controls', 'info-' + id);
+            info.setAttribute('aria-label', 'What is ' + label + '?');
+            info.innerHTML = '<span aria-hidden="true">i</span>';
+            const pop = document.createElement('div');
+            pop.className = 'info-pop';
+            pop.id = 'info-' + id;
+            pop.setAttribute('role', 'note');
+            pop.hidden = true;
+            pop.innerHTML = infoHtml;
+            info.addEventListener('click', e => {
+                e.stopPropagation();
+                const wasOpen = openInfo && openInfo.pop === pop;
+                closeInfo();
+                if (!wasOpen) {
+                    pop.hidden = false;
+                    info.setAttribute('aria-expanded', 'true');
+                    openInfo = { btn: info, pop };
+                }
+            });
+            li.append(chip, info, pop);
+            return li;
+        }
+        document.addEventListener('click', e => { if (openInfo && !openInfo.pop.contains(e.target)) closeInfo(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeInfo(); });
+
+        function renderLegend() {
+            const R = ROLES[state.role];
+            const f = state.filters[state.role];
+
+            const areaList = document.getElementById('areaList');
+            areaList.innerHTML = '';
+            R.areas.forEach(a => {
+                areaList.appendChild(legendRow(
+                    state.role + '-' + a.key,
+                    shapeSvg(a.shape, '#FFFFFF'),
+                    a.label,
+                    f.areas.has(a.key),
+                    on => { on ? f.areas.add(a.key) : f.areas.delete(a.key); updateChart(); },
+                    '<strong>' + a.label + '</strong><p>' + a.def + '</p>'
+                ));
+            });
+
+            const typeList = document.getElementById('typeList');
+            typeList.innerHTML = '';
+            R.types.forEach(k => {
+                const t = TYPES[k];
+                typeList.appendChild(legendRow(
+                    state.role + '-' + k,
+                    '<span class="bar" style="background:' + t.color + '"></span>',
+                    t.label,
+                    f.types.has(k),
+                    on => { on ? f.types.add(k) : f.types.delete(k); updateChart(); },
+                    '<strong>' + t.label + '</strong><p>' + t.def + '</p>'
+                ));
+            });
+        }
+
+        function selectAll(kind) {
+            const f = state.filters[state.role];
+            const R = ROLES[state.role];
+            if (kind === 'areas') R.areas.forEach(a => f.areas.add(a.key));
+            else R.types.forEach(k => f.types.add(k));
+            renderLegend();
+            updateChart();
+        }
+        document.getElementById('areaAll').addEventListener('click', () => selectAll('areas'));
+        document.getElementById('hideDone').addEventListener('change', e => { state.hideDone = e.target.checked; save(); updateChart(); });
+        document.getElementById('typeAll').addEventListener('click', () => selectAll('types'));
+
+        /* ---------- Group baseline ---------- */
+        function renderBaseline() {
+            const R = ROLES[state.role];
+            document.getElementById('baselineName').textContent = R.baselineName;
+            document.getElementById('baselineIntro').textContent = R.baselineIntro;
+            const ul = document.getElementById('baselineList');
+            ul.innerHTML = '';
+            const status = document.getElementById('baselineStatus');
+            if (state.role === 'site') {
+                BASELINE.forEach(b => {
+                    const li = document.createElement('li');
+                    const lab = document.createElement('label');
+                    const box = document.createElement('input');
+                    box.type = 'checkbox';
+                    box.id = 'baseline-' + b.id;
+                    box.checked = !!state.baseline[b.id];
+                    lab.classList.toggle('done', box.checked);
+                    box.addEventListener('change', () => {
+                        state.baseline[b.id] = box.checked;
+                        lab.classList.toggle('done', box.checked);
+                        save();
+                        baselineStatus();
+                    });
+                    const span = document.createElement('span');
+                    span.textContent = b.label;
+                    lab.append(box, span);
+                    li.appendChild(lab);
+                    ul.appendChild(li);
+                });
+                baselineStatus();
+            } else {
+                BASELINE.forEach(b => {
+                    const li = document.createElement('li');
+                    li.innerHTML = '<div class="b-item"><span class="b-dot" aria-hidden="true"></span><span>' + b.label + '</span></div>';
+                    ul.appendChild(li);
+                });
+                status.textContent = 'Applies to every site in a water-stressed area';
+            }
+        }
+        function baselineStatus() {
+            const done = BASELINE.filter(b => state.baseline[b.id]).length;
+            document.getElementById('baselineStatus').textContent = done + ' of ' + BASELINE.length + ' in place';
+        }
+
+        /* ---------- Role ---------- */
+        function setRole(role) {
+            state.role = role;
+            save();
+            closeInfo();
+            document.querySelectorAll('.role-switch button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.role === role)));
+            const R = ROLES[role];
+            document.getElementById('roleNote').textContent = R.note;
+            document.getElementById('mainTitle').textContent = R.mainTitle;
+            document.getElementById('matrixTitle').textContent = R.matrixTitle;
+            document.getElementById('areaTitle').textContent = R.areaTitle;
+            document.getElementById('areaHint').textContent = R.areaHint;
+            document.getElementById('matrixHint').textContent = 'Click a mark to open its action plan. Positions, costs and timelines are draft estimates.';
+            renderLegend();
+            renderBaseline();
+            if (chartInstance) updateChart();
+        }
+        document.querySelectorAll('.role-switch button').forEach(b => b.addEventListener('click', () => setRole(b.dataset.role)));
+        setRole(state.role);
 
         // Slim header once the page has scrolled (with a small dead zone so it does not flicker).
         const header = document.querySelector('header');

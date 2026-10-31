@@ -194,7 +194,7 @@
         }
         .chip .chip-label { flex: 1; min-width: 0; }
         .chip .mark { width: 22px; height: 22px; flex-shrink: 0; display: block; transition: opacity .15s; }
-        .chip .bar { width: 22px; height: 10px; flex-shrink: 0; transition: opacity .15s; }
+        .chip .bar { width: 14px; height: 14px; margin: 0 4px; border-radius: 50%; flex-shrink: 0; box-shadow: inset 0 0 0 1.5px rgba(29,29,27,.4); transition: opacity .15s; }
         .chip::after {
             content: "";
             width: 18px; height: 18px; flex-shrink: 0;
@@ -673,11 +673,11 @@
 
         /* Type of action = colour. Based on the SBTN AR3T framework, simplified for site use. */
         const TYPES = {
-            reduce:    { label: 'Reduce',               color: '#D8282F', def: 'Use less water for the same result.' },
-            reuse:     { label: 'Reuse',                color: '#1F6FB2', def: 'Use water a second time instead of discharging it, with or without treatment.' },
-            prepare:   { label: 'Prepare',              color: '#4B5560', def: 'Measure, map or study first, so the right measures can be chosen and their results checked.' },
-            restore:   { label: 'Restore & regenerate', color: '#2E7D4F', def: 'Improve the water and nature around the site, outside the fence, with local partners.' },
-            transform: { label: 'Transform',            color: '#7A4FA3', def: 'Change how the group works: products, processes, suppliers or strategy.' }
+            reduce:    { label: 'Reduce',               color: '#E68A58', def: 'Use less water for the same result.' },
+            reuse:     { label: 'Reuse',                color: '#4482A3', def: 'Use water a second time instead of discharging it, with or without treatment.' },
+            prepare:   { label: 'Prepare',              color: '#99B7A4', def: 'Measure, map or study first, so the right measures can be chosen and their results checked.' },
+            restore:   { label: 'Restore & regenerate', color: '#818546', def: 'Improve the water and nature around the site, outside the fence, with local partners.' },
+            transform: { label: 'Transform',            color: '#884529', def: 'Change how the group works: products, processes, suppliers or strategy.' }
         };
 
         /* Area = shape. Different areas for each role. */
@@ -735,8 +735,18 @@
             diamond:  '<path d="M16 1.5 L30.5 16 L16 30.5 L1.5 16 Z"/>',
             hexagon:  '<path d="M16 2 L28.5 9 V23 L16 30 L3.5 23 V9 Z"/>'
         };
+        // Equal visual weight: each shape is scaled to roughly the same area,
+        // and the triangle is lifted so it looks centred.
+        const SHAPE_OPTICS = {
+            circle:   { s: 0.94, dy: 0 },
+            square:   { s: 0.9, dy: 0 },
+            triangle: { s: 1.12, dy: -2 },
+            diamond:  { s: 1.04, dy: 0 },
+            hexagon:  { s: 0.97, dy: 0 }
+        };
         function shapeSvg(shape, fill, extraClass) {
-            return '<svg class="' + (extraClass || 'mark') + '" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><g fill="' + fill + '" stroke="#1D1D1B" stroke-width="2" stroke-linejoin="round">' + SHAPE_SVG[shape] + '</g></svg>';
+            const o = SHAPE_OPTICS[shape] || { s: 1, dy: 0 };
+            return '<svg class="' + (extraClass || 'mark') + '" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><g fill="' + fill + '" transform="translate(16 ' + (16 + o.dy * 0.8) + ') scale(' + (o.s * 0.8) + ') translate(-16 -16)">' + SHAPE_SVG[shape] + '</g></svg>';
         }
 
         /* ---------- State, kept in this browser ---------- */
@@ -762,10 +772,10 @@
 
         // The four boxes of the matrix, in priority order (same names as the TP slides).
         const QUADRANTS = [
-            { n: 1, name: 'Quick Wins',             sub: 'Short-to-medium term', fill: '#F9CF77', box: 'tl' },
-            { n: 2, name: 'Strategic Investments',  sub: 'Medium-to-long term',  fill: '#FCE6B5', box: 'tr' },
-            { n: 3, name: 'Secondary Improvements', sub: 'When convenient',      fill: '#FCE6B5', box: 'bl' },
-            { n: 4, name: 'Deprioritized',          sub: 'Only with a clear reason', fill: '#F7F4EC', box: 'br' }
+            { n: 1, name: 'Quick Wins',             sub: 'Short-to-medium term', fill: '#FCEBC0', box: 'tl' },
+            { n: 2, name: 'Strategic Investments',  sub: 'Medium-to-long term',  fill: '#FBF4E2', box: 'tr' },
+            { n: 3, name: 'Secondary Improvements', sub: 'When convenient',      fill: '#F6F5F1', box: 'bl' },
+            { n: 4, name: 'Deprioritized',          sub: 'Only with a clear reason', fill: '#EFEFEC', box: 'br' }
         ];
 
         // Paints each box in its priority tint and writes its name in the bottom outer corner,
@@ -784,11 +794,17 @@
                 };
                 const font = getComputedStyle(document.body).fontFamily;
                 const compact = (a.right - a.left) < 520;
+                chart.$quadrants = QUADRANTS.map(q => ({ fill: q.fill, rect: rects[q.box] }));
                 ctx.save();
                 QUADRANTS.forEach(q => {
                     const [rx, ry, rw, rh] = rects[q.box];
                     ctx.fillStyle = q.fill;
                     ctx.fillRect(rx, ry, rw, rh);
+                    if (q.box === 'tl') {
+                        // Quick Wins carries the Sika yellow as a top rule, like the brand's section bars
+                        ctx.fillStyle = '#F5B325';
+                        ctx.fillRect(rx, ry, rw, 4);
+                    }
 
                     const right = q.box === 'tr' || q.box === 'br';
                     const pad = compact ? 8 : 12;
@@ -901,18 +917,37 @@
         const CHECK_PATH = 'M10 16.5 L14.2 20.7 L22.5 12';
         const MARK_R = 10;
         function isDone(m) { return state.role === 'site' && !!state.done[m.id]; }
-        function drawMark(c, shape, x, y, size, done, color) {
+        // Darker edge in the same hue, so a mark reads as a solid piece rather than a sticker.
+        function shade(hex, k) {
+            const n = parseInt(hex.slice(1), 16), ink = [29, 29, 27];
+            const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v, i) => Math.round(v + (ink[i] - v) * k));
+            return 'rgb(' + c.join(',') + ')';
+        }
+        function surfaceAt(chart, x, y) {
+            const q = (chart.$quadrants || []).find(({ rect: [rx, ry, rw, rh] }) => x >= rx - 2 && x <= rx + rw + 2 && y >= ry - 2 && y <= ry + rh + 2);
+            return q ? q.fill : '#FFFFFF';
+        }
+        function drawMark(c, shape, x, y, size, done, color, surface) {
+            const o = SHAPE_OPTICS[shape] || { s: 1, dy: 0 };
+            const sz = size * o.s;
             c.save();
-            c.translate(x - size / 2, y - size / 2);
-            c.scale(size / 32, size / 32);
+            c.translate(x - sz / 2, y - sz / 2);
+            c.scale(sz / 32, sz / 32);
+            c.translate(0, o.dy);
             const p = new Path2D(SHAPE_PATH[shape]);
+            const unit = 32 / sz;                   // 1 screen px in shape units
             c.lineJoin = 'round';
-            c.lineWidth = 1.6 * 32 / size;
-            c.fillStyle = done ? '#FFFFFF' : color;
-            c.strokeStyle = done ? '#8C9298' : ink;
-            c.fill(p); c.stroke(p);
+            // 2px gap in the colour of the box underneath keeps close marks apart
+            c.lineWidth = 5 * unit;
+            c.strokeStyle = surface;
+            c.stroke(p);
+            c.fillStyle = done ? surface : color;
+            c.fill(p);
+            c.lineWidth = 1.5 * unit;
+            c.strokeStyle = done ? '#8A9096' : shade(color, 0.45);
+            c.stroke(p);
             if (done) {
-                c.lineWidth = 3.4; c.lineCap = 'round'; c.strokeStyle = '#5E646A';
+                c.lineWidth = 3.2; c.lineCap = 'round'; c.strokeStyle = '#5E646A';
                 c.stroke(new Path2D(CHECK_PATH));
             }
             c.restore();
@@ -933,7 +968,7 @@
                     const r = el.options && Number.isFinite(el.options.radius) ? el.options.radius : MARK_R;
                     const size = base * r / MARK_R;
                     if (size < 1) return;
-                    drawMark(chart.ctx, areaOf(m).shape, el.x, el.y, size, isDone(m), TYPES[m.type].color);
+                    drawMark(chart.ctx, areaOf(m).shape, el.x, el.y, size, isDone(m), TYPES[m.type].color, surfaceAt(chart, el.x, el.y));
                 });
             }
         };
@@ -1112,7 +1147,7 @@
             R.areas.forEach(a => {
                 areaList.appendChild(legendRow(
                     state.role + '-' + a.key,
-                    shapeSvg(a.shape, '#FFFFFF'),
+                    shapeSvg(a.shape, '#1D1D1B'),
                     a.label,
                     f.areas.has(a.key),
                     on => { on ? f.areas.add(a.key) : f.areas.delete(a.key); updateChart(); },

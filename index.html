@@ -506,6 +506,120 @@
         .kpi-value { font-weight: 700; font-size: 17px; }
         .kpi-value.normal { font-weight: 500; font-size: 15px; }
 
+
+        [hidden] { display: none !important; }
+
+        /* ONBOARDING: two short steps before the measures */
+        .onboard { max-width: 880px; margin: 0 auto; padding: 36px 24px 64px; }
+        .steps { list-style: none; display: flex; gap: 8px; margin: 0 0 18px; padding: 0; counter-reset: step; }
+        .steps li {
+            counter-increment: step;
+            display: flex; align-items: center; gap: 8px;
+            font-size: 14px; font-weight: 600; color: var(--muted);
+        }
+        .steps li + li::before { content: ""; width: 28px; height: 1.5px; background: var(--line); margin-right: 2px; }
+        .steps li span {
+            display: inline-grid; place-items: center;
+            width: 24px; height: 24px; font-size: 13px; font-weight: 700;
+            border: 1.5px solid var(--line); background: var(--paper); color: var(--muted);
+        }
+        .steps li span::before { content: counter(step); }
+        .steps li[aria-current="step"] { color: var(--ink); }
+        .steps li[aria-current="step"] span { background: var(--sika-yellow); border-color: var(--sika-yellow); color: var(--ink); }
+        .steps li.done { color: var(--ink); }
+        .steps li.done span { background: var(--ink); border-color: var(--ink); color: var(--sika-yellow); }
+
+        .ob-card {
+            background: var(--paper);
+            border-top: 6px solid var(--sika-yellow);
+            padding: 30px 32px 28px;
+            animation: step-in .32s cubic-bezier(.23, 1, .32, 1) both;
+        }
+        .ob-card h2 { margin: 0 0 6px; font-size: 28px; font-weight: 700; line-height: 1.15; text-wrap: balance; }
+        .ob-intro { margin: 0 0 24px; font-size: 15px; color: var(--muted); max-width: 62ch; text-wrap: pretty; }
+
+        .ob-section { border: 0; margin: 0; padding: 20px 0 0; border-top: 1px solid var(--line); min-inline-size: 0; }
+        .ob-section + .ob-section { margin-top: 26px; }
+        .ob-section > legend { float: left; width: 100%; padding: 0; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+        .ob-section > .filter-hint { clear: both; margin: 0 0 12px; padding-top: 4px; }
+        .ob-section > legend + * { clear: both; }
+        .ob-section > legend + .field { padding-top: 2px; }
+        .ob-card h2:focus { outline: none; }
+
+        .field { margin-top: 18px; }
+        legend.field-label { padding: 0; }
+        .field-label { display: block; margin: 0 0 8px; font-size: 16px; font-weight: 600; }
+        .field-label .opt-tag { font-weight: 500; font-size: 13px; color: var(--muted); margin-left: 6px; }
+        .field-hint { margin: -4px 0 8px; font-size: 13px; color: var(--muted); }
+        .field-error { margin: 8px 0 0; font-size: 14px; font-weight: 600; color: #B3261E; }
+
+        .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+        .opt { position: relative; }
+        .opt input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+        .opt span {
+            display: flex; align-items: center; gap: 8px;
+            min-height: 40px; padding: 8px 14px;
+            border: 1.5px solid var(--line); background: var(--paper);
+            font-size: 15px; font-weight: 500; line-height: 1.3;
+            transition: background-color .15s ease-out, border-color .15s ease-out, transform .16s ease-out;
+        }
+        .opt span::before {
+            content: ""; flex-shrink: 0; width: 16px; height: 16px;
+            border: 1.5px solid #9AA0A5; background: var(--paper) no-repeat center / 11px;
+        }
+        .opt input[type="radio"] + span::before { border-radius: 50%; }
+        .opt:hover span { border-color: var(--ink); }
+        .opt input:checked + span { border-color: var(--ink); background: var(--yellow-wash); }
+        .opt input[type="checkbox"]:checked + span::before {
+            border-color: var(--ink); background-color: var(--ink);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.3 5 8.6 9.6 3.6' fill='none' stroke='%23F5B325' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        }
+        .opt input[type="radio"]:checked + span::before { border-color: var(--ink); box-shadow: inset 0 0 0 3.5px var(--paper); background: var(--ink); }
+        .opt input:focus-visible + span { outline: 3px solid var(--ink); outline-offset: 2px; }
+        .opt input:active + span { transform: scale(.97); }
+
+        .ob-section > .type-grid { padding-top: 10px; }
+        .type-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; }
+        .type-grid .opt span { min-height: 48px; }
+
+        .text-input {
+            width: 100%; max-width: 420px; min-height: 44px; padding: 8px 12px;
+            border: 1.5px solid var(--ink); background: var(--paper);
+            font: 500 16px var(--font); color: var(--ink);
+        }
+        .text-input[aria-invalid="true"] { border-color: #B3261E; }
+        .num-row { display: flex; flex-wrap: wrap; gap: 12px 16px; }
+        .num-field { display: grid; gap: 4px; font-size: 14px; font-weight: 500; }
+        .num-field .unit-wrap { display: flex; align-items: center; gap: 6px; }
+        .num-field input { width: 110px; min-height: 40px; padding: 6px 10px; border: 1.5px solid var(--line); font: 500 16px var(--font); font-variant-numeric: tabular-nums; }
+        .num-field input:focus-visible, .text-input:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+        .balance-total { margin: 10px 0 0; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+        .balance-total.off { color: #8A5A00; font-weight: 600; }
+
+        .ob-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--line); }
+        .ob-actions .grow { flex: 1; }
+        .btn-primary, .btn-secondary {
+            min-height: 46px; padding: 0 24px;
+            font: 600 16px var(--font); cursor: pointer;
+            transition: transform .16s ease-out, background-color .15s ease-out;
+        }
+        .btn-primary { border: 1.5px solid var(--ink); background: var(--ink); color: var(--sika-yellow); }
+        .btn-primary:hover { background: #33332F; }
+        .btn-secondary { border: 1.5px solid var(--ink); background: var(--paper); color: var(--ink); }
+        .btn-secondary:hover { background: var(--concrete); }
+        .btn-primary:active, .btn-secondary:active { transform: scale(.97); }
+
+        /* Site profile at the top of the tool */
+        .profile-card { margin: 4px 0 6px; padding: 14px 16px; background: var(--concrete); }
+        .profile-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+        .profile-name { margin: 0; font-size: 17px; font-weight: 700; overflow-wrap: anywhere; }
+        .profile-line { margin: 4px 0 0; font-size: 14px; color: var(--muted); }
+        .profile-note { margin: 10px 0 0; font-size: 13px; color: var(--ink); }
+        .profile-edit { margin-top: 8px; min-height: 24px; }
+        .role-switch.mixed { margin-top: 14px; }
+
+        @keyframes step-in { from { opacity: 0; transform: translateY(8px); } }
+
         /* MOTION */
         @keyframes cut-in { from { clip-path: polygon(0 0, 0% 0, 0% 100%, 0 100%); } }
         @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
@@ -513,7 +627,9 @@
         @keyframes pop { from { opacity: 0; transform: translateY(-4px); } }
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation: none !important; transition: none !important; }
+            .ob-card { animation: fade-in .2s ease-out both !important; }
         }
+        @keyframes fade-in { from { opacity: 0; } }
 
         /* RESPONSIVE */
         @media (max-width: 900px) {
@@ -529,6 +645,14 @@
             .detail-header { flex-direction: column; }
             .tags { justify-content: flex-start; }
             .folder-sheet { padding: 18px 16px; }
+            .onboard { padding: 20px 16px 40px; }
+            .ob-card { padding: 22px 18px 20px; }
+            .ob-card h2 { font-size: 23px; }
+            .steps li { font-size: 0; gap: 0; }
+            .steps li[aria-current="step"] { font-size: 14px; gap: 8px; }
+            .steps li + li::before { width: 16px; margin-right: 8px; }
+            .ob-actions { flex-direction: column-reverse; align-items: stretch; }
+            .btn-primary, .btn-secondary { width: 100%; }
             .detail-title { font-size: 22px; }
         }
     </style>
@@ -542,11 +666,56 @@
         </div>
     </header>
 
-    <div class="container">
+    <!-- SETUP: who you are, then a short profile of the site -->
+    <main class="onboard" id="onboarding" hidden>
+        <ol class="steps" id="steps" aria-label="Setup progress">
+            <li data-step="1"><span aria-hidden="true"></span>Your site type</li>
+            <li data-step="2"><span aria-hidden="true"></span>About your site</li>
+            <li data-step="3"><span aria-hidden="true"></span>Your measures</li>
+        </ol>
+
+        <section class="ob-card" id="step1" aria-labelledby="s1Title" hidden>
+            <h2 id="s1Title" tabindex="-1">What kind of Sika site do you work at?</h2>
+            <p class="ob-intro">Pick the one that fits. Your answer decides which measures you see.</p>
+            <fieldset class="ob-section">
+                <legend>Production sites</legend>
+                <div class="type-grid" id="typesSite"></div>
+            </fieldset>
+            <fieldset class="ob-section">
+                <legend>Group functions</legend>
+                <div class="type-grid" id="typesGroup"></div>
+            </fieldset>
+            <p class="field-error" id="typeError" role="alert" hidden></p>
+            <div class="ob-actions">
+                <span class="grow"></span>
+                <button type="button" class="btn-primary" id="toStep2">Continue</button>
+            </div>
+        </section>
+
+        <section class="ob-card" id="step2" aria-labelledby="s2Title" hidden>
+            <h2 id="s2Title" tabindex="-1">Tell us about your site</h2>
+            <p class="ob-intro">It takes about two minutes. If you're not sure, pick "I don't know". You can change your answers later.</p>
+            <form id="siteForm" novalidate>
+                <div id="formBody"></div>
+                <div class="ob-actions">
+                    <button type="button" class="btn-secondary" id="backTo1">Back</button>
+                    <button type="submit" class="btn-primary">Show my measures</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <div class="container" id="toolView" hidden>
         <!-- PART 1: Role and legend (the legend doubles as filters) -->
         <div class="left-panel">
-            <h3 class="panel-title"><span class="num"><span>1</span></span>Your role</h3>
-            <div class="role-switch" role="group" aria-label="Your role">
+            <h3 class="panel-title"><span class="num"><span>1</span></span>Your site</h3>
+            <section class="profile-card" aria-label="Your site profile">
+                <p class="profile-name" id="profileName"></p>
+                <p class="profile-line" id="profileLine"></p>
+                <p class="profile-note" id="profileNote" hidden></p>
+                <button type="button" class="text-btn profile-edit" id="editProfile">Edit answers</button>
+            </section>
+            <div class="role-switch mixed" id="roleSwitch" role="group" aria-label="Measures to show" hidden>
                 <button type="button" id="role-site" data-role="site" aria-pressed="true">Site operator</button>
                 <button type="button" id="role-group" data-role="group" aria-pressed="false">Group team</button>
             </div>
@@ -752,13 +921,14 @@
         /* ---------- State, kept in this browser ---------- */
         const STORE = 'sika-water-tool';
         function load() { try { return JSON.parse(localStorage.getItem(STORE)) || {}; } catch (e) { return {}; } }
-        function save() { try { localStorage.setItem(STORE, JSON.stringify({ role: state.role, baseline: state.baseline, done: state.done, hideDone: state.hideDone })); } catch (e) {} }
+        function save() { try { localStorage.setItem(STORE, JSON.stringify({ role: state.role, baseline: state.baseline, done: state.done, hideDone: state.hideDone, profile: state.profile })); } catch (e) {} }
         const saved = load();
         const state = {
             role: saved.role === 'group' ? 'group' : 'site',
             baseline: saved.baseline || {},
             done: saved.done || {},
             hideDone: !!saved.hideDone,
+            profile: saved.profile || null,
             filters: {
                 site:  { areas: new Set(ROLES.site.areas.map(a => a.key)),  types: new Set(ROLES.site.types) },
                 group: { areas: new Set(ROLES.group.areas.map(a => a.key)), types: new Set(ROLES.group.types) }
@@ -975,6 +1145,7 @@
         function areaOf(m) { return ROLES[m.role].areas.find(a => a.key === m.area); }
 
         function updateChart(keepPanel) {
+            if (typeof renderProfileCard === 'function' && state.profile) renderProfileCard();
             const role = state.role;
             const f = state.filters[role];
             const all = MEASURES.filter(m => m.role === role);
@@ -1226,6 +1397,208 @@
             document.getElementById('baselineStatus').textContent = done + ' of ' + BASELINE.length + ' in place';
         }
 
+
+        /* ---------- Setup: site type, then site profile ---------- */
+        // scope 'site' = the site runs its own operations and picks site-led measures;
+        // scope 'group' = it leads or supports measures for all sites.
+        const SITE_TYPES = [
+            { key: 'plant',     label: 'Production site',            scope: 'site' },
+            { key: 'hq',        label: 'Headquarters',               scope: 'group' },
+            { key: 'gtc',       label: 'Global Technology Center',   scope: 'group' },
+            // Not offered: warehouses, technology centers, joint ventures, training centers, offices and subsidiaries.
+            { key: 'other',     label: 'Other Sika entity',          scope: 'group', hidden: true }
+        ];
+        // Draft list taken from the site initiatives collected so far. To be replaced by the full list of Sika plants.
+        const SIKA_SITES = ['CN Davco - Wuhan', 'CN MBCC - Minhang', 'CN Shanghai', 'CN Xiaogan - Hubei', 'CN Zhenjiang - Jiangsu',
+            'CO Tocancipa - Bogota', 'DE MBCC - Lutherstadt Wittenberg', 'ES Alcobendas - Madrid', 'ID Cikarang',
+            'IN Kharagpur - Vidyasagar Industrial Park', 'MX Abasolo', 'PH Taguig', 'RO Ploiesti - Admixtures', 'RS Simanovci',
+            'TH Saraburi', 'US Dunmore', 'US Fairless Hills - Philadelphia', 'US Jacksonville', 'US Marion - Ohio',
+            'US Santa Fe Springs - Los Angeles', 'US Sealy - Houston', 'VE Valencia', 'VN Dong Nai Province'];
+        const DK = "I don't know";
+        // Answer options are a first proposal from the TP team.
+        const PROFILE_FORM = [
+            { section: 'The site', fields: [
+                { id: 'siteName', kind: 'site', label: 'Site name', hint: 'Start typing and pick your site from the list.' },
+                { id: 'products', kind: 'multi', label: 'What does the site produce?', options: ['Concrete admixtures', 'Mortars and grouts', 'Waterproofing membranes', 'Sealants and adhesives', 'Flooring and coatings', 'Roofing', 'Other'] }
+            ]},
+            { section: 'Water on site', fields: [
+                { id: 'sources', kind: 'multi', label: 'Where does the water come from?', options: ['Public water supply', 'Own well (groundwater)', 'River or lake', 'Rainwater', 'Recycled or treated wastewater', DK] },
+                { id: 'cooling', kind: 'single', label: 'How are processes cooled?', options: ['No cooling needed', 'Air cooling only', 'Closed water loop or chiller', 'Cooling tower', 'Water used once, then discharged', DK] }
+            ]},
+            { section: 'Surroundings and rules', fields: [
+                { id: 'location', kind: 'multi', label: 'Where is the site?', options: ['Industrial park', 'City', 'Countryside', 'On the coast', 'Near a river, wetland or protected area'] },
+                { id: 'climate', kind: 'single', label: 'How much rain falls there?', options: ['Dry (under 400 mm a year)', 'Moderate (400 to 1,000 mm)', 'Wet (over 1,000 mm)', 'Long dry season, then heavy rain', DK] },
+                { id: 'space', kind: 'single', label: 'How much free space is there for new equipment?', options: ['Almost none', 'Room for a tank', 'Room for a small treatment unit', 'Plenty of space', DK] },
+                { id: 'legal', kind: 'multi', label: 'Which rules apply to the site?', options: ['Strict limits on what can be discharged', 'A cap or permit on how much water can be taken', 'Water restrictions during droughts', 'A firefighting water reserve must be kept', 'Sea water may be used', 'None that I know of'] }
+            ]},
+            { section: 'Figures, if you have them', optional: true, hint: 'Skip this part if you don\'t have the numbers to hand.', fields: [
+                { id: 'withdrawal', kind: 'number', label: 'Total water taken per year', unit: 'm³' },
+                { id: 'balance', kind: 'balance', label: 'Share of that water used for', parts: [['cleaning', 'Cleaning'], ['cooling', 'Cooling'], ['process', 'Process and product'], ['sanitary', 'Sanitary']] }
+            ]}
+        ];
+        const EXCLUSIVE = [DK, 'None that I know of'];
+        const NO_WATER_COOLING = ['No cooling needed', 'Air cooling only'];
+
+        function esc(t) { return String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+        function optHtml(type, name, value, checked) {
+            return '<label class="opt"><input type="' + type + '" name="' + name + '" value="' + esc(value) + '"' + (checked ? ' checked' : '') + '><span>' + esc(value) + '</span></label>';
+        }
+        function renderTypes() {
+            const sel = (state.profile && state.profile.types) || [];
+            ['site', 'group'].forEach(scope => {
+                document.getElementById(scope === 'site' ? 'typesSite' : 'typesGroup').innerHTML = SITE_TYPES.filter(t => t.scope === scope && !t.hidden)
+                    .map(t => '<label class="opt"><input type="radio" name="siteType" value="' + t.key + '"' + (sel.includes(t.key) ? ' checked' : '') + '><span>' + esc(t.label) + '</span></label>').join('');
+            });
+        }
+        function renderProfileForm() {
+            const a = (state.profile && state.profile.answers) || {};
+            let html = '<datalist id="sikaSites">' + SIKA_SITES.map(n => '<option value="' + esc(n) + '">').join('') + '</datalist>';
+            PROFILE_FORM.forEach((sec, si) => {
+                html += '<fieldset class="ob-section"><legend>' + esc(sec.section) + '</legend>' + (sec.hint ? '<p class="filter-hint">' + esc(sec.hint) + '</p>' : '');
+                sec.fields.forEach(f => {
+                    const lid = 'f-' + f.id;
+                    if (f.kind === 'site') {
+                        html += '<div class="field"><label class="field-label" for="' + lid + '">' + esc(f.label) + '</label><p class="field-hint" id="' + lid + '-hint">' + esc(f.hint) + '</p>' +
+                            '<input class="text-input" id="' + lid + '" name="siteName" list="sikaSites" autocomplete="off" aria-describedby="' + lid + '-hint" value="' + esc(a.siteName || '') + '">' +
+                            '<p class="field-error" id="' + lid + '-err" hidden></p></div>';
+                    } else if (f.kind === 'single' || f.kind === 'multi') {
+                        const cur = a[f.id] || (f.kind === 'multi' ? [] : '');
+                        html += '<fieldset class="field" style="border:0;padding:0;margin-inline:0"><legend class="field-label">' + esc(f.label) + (f.kind === 'multi' ? '<span class="opt-tag">Select all that apply</span>' : '') + '</legend><div class="opts">' +
+                            f.options.map(o => optHtml(f.kind === 'multi' ? 'checkbox' : 'radio', f.id, o, f.kind === 'multi' ? cur.includes(o) : cur === o)).join('') + '</div></fieldset>';
+                    } else if (f.kind === 'number') {
+                        html += '<div class="field num-field"><label class="field-label" for="' + lid + '">' + esc(f.label) + '<span class="opt-tag">Optional</span></label>' +
+                            '<span class="unit-wrap"><input id="' + lid + '" name="' + f.id + '" type="number" inputmode="numeric" min="0" step="1" value="' + esc(a[f.id] ?? '') + '" style="width:160px"> ' + esc(f.unit) + '</span></div>';
+                    } else if (f.kind === 'balance') {
+                        const b = a.balance || {};
+                        html += '<fieldset class="field" style="border:0;padding:0;margin-inline:0"><legend class="field-label">' + esc(f.label) + '<span class="opt-tag">Optional</span></legend><div class="num-row">' +
+                            f.parts.map(([k, l]) => '<label class="num-field">' + esc(l) + '<span class="unit-wrap"><input name="bal-' + k + '" type="number" inputmode="numeric" min="0" max="100" step="1" value="' + esc(b[k] ?? '') + '"> %</span></label>').join('') +
+                            '</div><p class="balance-total" id="balanceTotal" aria-live="polite"></p></fieldset>';
+                    }
+                });
+                html += '</fieldset>';
+            });
+            document.getElementById('formBody').innerHTML = html;
+            updateBalance();
+        }
+        function updateBalance() {
+            const el = document.getElementById('balanceTotal'); if (!el) return;
+            const vals = [...document.querySelectorAll('[name^="bal-"]')].map(i => i.value === '' ? null : Number(i.value));
+            if (vals.every(v => v === null)) { el.textContent = ''; el.classList.remove('off'); return; }
+            const total = vals.reduce((s, v) => s + (v || 0), 0);
+            el.textContent = 'Total: ' + total + '%' + (total === 100 ? '' : '. The four shares should add up to 100%.');
+            el.classList.toggle('off', total !== 100);
+        }
+        function readForm() {
+            const form = document.getElementById('siteForm');
+            const a = { siteName: form.siteName.value.trim() };
+            PROFILE_FORM.forEach(sec => sec.fields.forEach(f => {
+                if (f.kind === 'multi') a[f.id] = [...form.querySelectorAll('[name="' + f.id + '"]:checked')].map(i => i.value);
+                if (f.kind === 'single') { const c = form.querySelector('[name="' + f.id + '"]:checked'); a[f.id] = c ? c.value : ''; }
+                if (f.kind === 'number') a[f.id] = form[f.id].value === '' ? null : Number(form[f.id].value);
+                if (f.kind === 'balance') { a.balance = {}; f.parts.forEach(([k]) => { const v = form['bal-' + k].value; if (v !== '') a.balance[k] = Number(v); }); }
+            }));
+            return a;
+        }
+
+        function profileScopes(types) {
+            const scopes = new Set(SITE_TYPES.filter(t => types.includes(t.key)).map(t => t.scope));
+            return { site: scopes.has('site'), group: scopes.has('group') };
+        }
+        function showStep(n) {
+            document.getElementById('toolView').hidden = n !== 3;
+            document.getElementById('onboarding').hidden = n === 3;
+            document.getElementById('step1').hidden = n !== 1;
+            document.getElementById('step2').hidden = n !== 2;
+            const sc = profileScopes((state.profile && state.profile.types) || []);
+            // the "About your site" step only exists for sites with operations
+            const typesChosen = state.profile && state.profile.types && state.profile.types.length;
+            document.querySelector('#steps [data-step="2"]').hidden = !!typesChosen && !sc.site;
+            document.querySelectorAll('#steps li').forEach(li => {
+                const s = Number(li.dataset.step);
+                li.classList.toggle('done', s < n);
+                if (s === n) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+            });
+            window.scrollTo(0, 0);
+            if (n === 1 || n === 2) document.getElementById(n === 1 ? 's1Title' : 's2Title').focus({ preventScroll: true });
+        }
+
+        document.getElementById('toStep2').addEventListener('click', () => {
+            const types = [...document.querySelectorAll('[name="siteType"]:checked')].map(i => i.value);
+            const err = document.getElementById('typeError');
+            if (!types.length) { err.textContent = 'Pick a type of site to continue.'; err.hidden = false; return; }
+            err.hidden = true;
+            state.profile = Object.assign({}, state.profile, { types: types });
+            save();
+            if (profileScopes(types).site) { renderProfileForm(); showStep(2); }
+            else finishSetup();
+        });
+        document.getElementById('typesSite').parentElement.parentElement.addEventListener('change', () => { document.getElementById('typeError').hidden = true; });
+        document.getElementById('backTo1').addEventListener('click', () => { state.profile.answers = readForm(); save(); showStep(1); });
+        document.getElementById('formBody').addEventListener('change', e => {
+            const t = e.target;
+            // "I don't know" and "None" cannot be combined with other answers
+            if (t.type === 'checkbox' && t.checked) {
+                const group = [...document.querySelectorAll('[name="' + t.name + '"]')];
+                if (EXCLUSIVE.includes(t.value)) group.forEach(i => { if (i !== t) i.checked = false; });
+                else group.forEach(i => { if (EXCLUSIVE.includes(i.value)) i.checked = false; });
+            }
+        });
+        document.getElementById('formBody').addEventListener('input', e => {
+            if (e.target.name && e.target.name.startsWith('bal-')) updateBalance();
+            if (e.target.name === 'siteName') { e.target.removeAttribute('aria-invalid'); document.getElementById('f-siteName-err').hidden = true; }
+        });
+        document.getElementById('siteForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const a = readForm();
+            if (!a.siteName) {
+                const input = document.getElementById('f-siteName'), err = document.getElementById('f-siteName-err');
+                err.textContent = 'Pick your site from the list, or type its name.';
+                err.hidden = false; input.setAttribute('aria-invalid', 'true'); input.setAttribute('aria-describedby', 'f-siteName-hint f-siteName-err');
+                input.focus(); return;
+            }
+            const before = state.profile.answers && state.profile.answers.cooling;
+            state.profile.answers = a;
+            // A site that doesn't cool with water starts with the cooling measures hidden (it can still show them).
+            if (a.cooling !== before) {
+                const areas = state.filters.site.areas;
+                if (NO_WATER_COOLING.includes(a.cooling)) areas.delete('cooling'); else areas.add('cooling');
+            }
+            finishSetup();
+        });
+        document.getElementById('editProfile').addEventListener('click', () => { renderTypes(); showStep(1); });
+
+        function finishSetup() {
+            state.profile.done = true;
+            const sc = profileScopes(state.profile.types);
+            if (!(sc.site && sc.group)) state.role = sc.site ? 'site' : 'group';
+            save();
+            enterTool();
+        }
+        function renderProfileCard() {
+            const p = state.profile || {}, a = p.answers || {}, sc = profileScopes(p.types || []);
+            const typeNames = SITE_TYPES.filter(t => (p.types || []).includes(t.key)).map(t => t.label);
+            document.getElementById('profileName').textContent = sc.site && a.siteName ? a.siteName : typeNames.join(', ');
+            const bits = sc.site && a.siteName ? [typeNames.join(', ')] : [];
+            if (sc.site && a.products && a.products.length) bits.push(a.products.join(', '));
+            document.getElementById('profileLine').textContent = bits.join(' · ');
+            const note = document.getElementById('profileNote');
+            const coolingHidden = state.role === 'site' && NO_WATER_COOLING.includes(a.cooling) && !state.filters.site.areas.has('cooling');
+            note.hidden = !coolingHidden;
+            note.textContent = coolingHidden ? 'Cooling measures are hidden because the site does not cool with water. Tick Cooling below to show them.' : '';
+            document.getElementById('roleSwitch').hidden = !(sc.site && sc.group);
+        }
+        function enterTool() {
+            showStep(3);
+            setRole(state.role);
+            if (!chartInstance) initChart(); else { chartInstance.resize(); updateChart(); }
+        }
+        function start() {
+            renderTypes();
+            if (state.profile && state.profile.done) enterTool();
+            else if (state.profile && state.profile.types && profileScopes(state.profile.types).site) { renderProfileForm(); showStep(2); }
+            else showStep(1);
+        }
+
         /* ---------- Role ---------- */
         function setRole(role) {
             state.role = role;
@@ -1241,6 +1614,7 @@
             document.getElementById('matrixHint').textContent = 'Click a mark to open its action plan. Positions, costs and timelines are draft estimates.';
             renderLegend();
             renderBaseline();
+            renderProfileCard();
             if (chartInstance) updateChart();
         }
         document.querySelectorAll('.role-switch button').forEach(b => b.addEventListener('click', () => setRole(b.dataset.role)));
@@ -1257,7 +1631,7 @@
         window.addEventListener('scroll', onScroll, { passive: true });
         onScroll();
 
-        window.onload = initChart;
+        window.onload = start;
     </script>
 </body>
 </html>

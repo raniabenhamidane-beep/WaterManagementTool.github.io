@@ -1582,7 +1582,9 @@
             if (!chartInstance) initChart(); else { chartInstance.resize(); updateChart(); }
         }
         function start() {
-            // The form opens on every visit; earlier answers are already filled in.
+            // The form opens empty on every visit: answers from an earlier visit are cleared.
+            state.profile = null;
+            save();
             renderTypes();
             showStep(1);
         }

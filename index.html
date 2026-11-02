@@ -1582,10 +1582,9 @@
             if (!chartInstance) initChart(); else { chartInstance.resize(); updateChart(); }
         }
         function start() {
+            // The form opens on every visit; earlier answers are already filled in.
             renderTypes();
-            if (state.profile && state.profile.done) enterTool();
-            else if (state.profile && state.profile.types && profileScopes(state.profile.types).site) { renderProfileForm(); showStep(2); }
-            else showStep(1);
+            showStep(1);
         }
 
         /* ---------- Role ---------- */

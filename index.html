@@ -430,8 +430,6 @@
             gap: 16px;
             margin-bottom: 14px;
         }
-        .detail-full { margin: 10px 0 18px; font-size: 16px; line-height: 1.5; color: var(--muted); max-width: 70ch; }
-        .detail-full:empty { display: none; }
         .detail-title {
             font-size: 26px;
             font-weight: 600;
@@ -785,7 +783,6 @@
                         </div>
                     </div>
 
-                    <p class="detail-full" id="det-full"></p>
                     <div id="det-body"></div>
                 </div>
             </div>
@@ -1194,8 +1191,7 @@
             void panel.offsetWidth; // restart the opening animation
 
             const type = TYPES[measure.type];
-            document.getElementById('det-title').innerText = measure.short || measure.title;
-            document.getElementById('det-full').innerText = measure.short ? measure.title : '';
+            document.getElementById('det-title').innerText = measure.title;
             document.getElementById('det-tag1').innerText = areaOf(measure).label;
             document.getElementById('det-tag2').innerText = type.label;
 

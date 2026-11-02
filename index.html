@@ -979,22 +979,14 @@
                     const right = q.box === 'tr' || q.box === 'br';
                     const pad = compact ? 8 : 12;
                     const top = q.box === 'tl' || q.box === 'tr';
-                    const baseY = top ? ry + pad + 34 : ry + rh - pad;
+                    const baseY = top ? ry + pad + 16 : ry + rh - pad;
                     // name
                     ctx.fillStyle = '#1D1D1B';
                     ctx.font = '700 15px ' + font;
                     ctx.textAlign = right ? 'right' : 'left';
                     ctx.textBaseline = 'alphabetic';
                     const tx = right ? rx + rw - pad : rx + pad;
-                    if (!compact) ctx.fillText(q.name, tx, baseY - 20);
-                    // horizon
-                    if (!compact) {
-                        ctx.font = 'italic 500 13px ' + font;
-                        ctx.fillStyle = '#5E646A';
-                        ctx.textAlign = right ? 'right' : 'left';
-                        ctx.textBaseline = 'alphabetic';
-                        ctx.fillText(q.sub, right ? rx + rw - pad : rx + pad, baseY);
-                    }
+                    if (!compact) ctx.fillText(q.name, tx, baseY);
                 });
                 ctx.restore();
             }
@@ -1422,7 +1414,7 @@
                 { id: 'products', kind: 'multi', label: 'What does the site produce?', options: ['Concrete admixtures', 'Mortars and grouts', 'Waterproofing membranes', 'Sealants and adhesives', 'Flooring and coatings', 'Roofing', 'Other'] }
             ]},
             { section: 'Water on site', fields: [
-                { id: 'sources', kind: 'multi', label: 'Where does the water come from?', options: ['Public water supply', 'Own well (groundwater)', 'River or lake', 'Rainwater', 'Recycled or treated wastewater', DK] },
+                { id: 'sources', kind: 'multi', label: 'Where does the water come from?', options: ['Public supply', 'Groundwater well', 'Surface water (river or lake)', 'Rainwater', DK] },
                 { id: 'cooling', kind: 'single', label: 'How are processes cooled?', options: ['No cooling needed', 'Air cooling only', 'Closed water loop or chiller', 'Cooling tower', 'Water used once, then discharged', DK] }
             ]},
             { section: 'Surroundings and rules', fields: [

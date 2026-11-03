@@ -593,6 +593,8 @@
         .num-field .unit-wrap { display: flex; align-items: center; gap: 6px; }
         .num-field input { width: 110px; min-height: 40px; padding: 6px 10px; border: 1.5px solid var(--line); font: 500 16px var(--font); font-variant-numeric: tabular-nums; }
         .num-field input:focus-visible, .text-input:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+        .sub-field { margin-top: 14px; padding-left: 14px; border-left: 2px solid var(--line); }
+        .sub-hint { font-size: 13px; color: var(--muted); font-weight: 400; }
         .balance-total { margin: 10px 0 0; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
         .balance-total.off { color: #8A5A00; font-weight: 600; }
 
@@ -1421,8 +1423,10 @@
                 { id: 'legal', kind: 'multi', label: 'Which rules apply to the site?', options: ['Strict limits on what can be discharged', 'A cap or permit on how much water can be taken', 'Water restrictions during droughts', 'A firefighting water reserve must be kept', 'Sea water may be used', 'None that I know of'] }
             ]},
             { section: 'Figures, if you have them', optional: true, hint: 'Skip this part if you don\'t have the numbers to hand.', fields: [
-                { id: 'withdrawal', kind: 'number', label: 'Total water taken per year', unit: 'm³' },
-                { id: 'balance', kind: 'balance', label: 'Share of that water used for', parts: [['cleaning', 'Cleaning'], ['cooling', 'Cooling'], ['process', 'Process and product'], ['sanitary', 'Sanitary']] }
+                { id: 'withdrawal', kind: 'number', label: 'Total water usage', unit: 'm³' },
+                // Same breakdown as Sika's Sustainability Report ("Breakdown of water usage per type")
+                { id: 'balance', kind: 'balance', label: 'Breakdown of water usage', parts: [['products', 'Water in products'], ['processCooling', 'Process and cooling water'], ['sanitary', 'Sanitary water']],
+                  sub: ['reusedInProducts', 'Of which water reused in products', 'Share of the water in products'] }
             ]}
         ];
         const EXCLUSIVE = [DK, 'None that I know of'];
@@ -1461,7 +1465,9 @@
                         const b = a.balance || {};
                         html += '<fieldset class="field" style="border:0;padding:0;margin-inline:0"><legend class="field-label">' + esc(f.label) + '<span class="opt-tag">Optional</span></legend><div class="num-row">' +
                             f.parts.map(([k, l]) => '<label class="num-field">' + esc(l) + '<span class="unit-wrap"><input name="bal-' + k + '" type="number" inputmode="numeric" min="0" max="100" step="1" value="' + esc(b[k] ?? '') + '"> %</span></label>').join('') +
-                            '</div><p class="balance-total" id="balanceTotal" aria-live="polite"></p></fieldset>';
+                            '</div><p class="balance-total" id="balanceTotal" aria-live="polite"></p>' +
+                            (f.sub ? '<label class="num-field sub-field">' + esc(f.sub[1]) + '<span class="sub-hint">' + esc(f.sub[2]) + '</span><span class="unit-wrap"><input name="sub-' + f.sub[0] + '" type="number" inputmode="numeric" min="0" max="100" step="1" value="' + esc(b[f.sub[0]] ?? '') + '"> %</span></label>' : '') +
+                            '</fieldset>';
                     }
                 });
                 html += '</fieldset>';
@@ -1474,7 +1480,7 @@
             const vals = [...document.querySelectorAll('[name^="bal-"]')].map(i => i.value === '' ? null : Number(i.value));
             if (vals.every(v => v === null)) { el.textContent = ''; el.classList.remove('off'); return; }
             const total = vals.reduce((s, v) => s + (v || 0), 0);
-            el.textContent = 'Total: ' + total + '%' + (total === 100 ? '' : '. The four shares should add up to 100%.');
+            el.textContent = 'Total: ' + total + '%' + (total === 100 ? '' : '. The three shares should add up to 100%.');
             el.classList.toggle('off', total !== 100);
         }
         function readForm() {
@@ -1484,7 +1490,7 @@
                 if (f.kind === 'multi') a[f.id] = [...form.querySelectorAll('[name="' + f.id + '"]:checked')].map(i => i.value);
                 if (f.kind === 'single') { const c = form.querySelector('[name="' + f.id + '"]:checked'); a[f.id] = c ? c.value : ''; }
                 if (f.kind === 'number') a[f.id] = form[f.id].value === '' ? null : Number(form[f.id].value);
-                if (f.kind === 'balance') { a.balance = {}; f.parts.forEach(([k]) => { const v = form['bal-' + k].value; if (v !== '') a.balance[k] = Number(v); }); }
+                if (f.kind === 'balance') { a.balance = {}; f.parts.forEach(([k]) => { const v = form['bal-' + k].value; if (v !== '') a.balance[k] = Number(v); }); if (f.sub) { const v = form['sub-' + f.sub[0]].value; if (v !== '') a.balance[f.sub[0]] = Number(v); } }
             }));
             return a;
         }
